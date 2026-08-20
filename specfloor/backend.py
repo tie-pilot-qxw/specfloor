@@ -22,7 +22,7 @@ second (scoring) pass below nearly free.
 
 The scoring contract
 --------------------
-PROTOCOL.md requires probabilities read from the RAW head: no temperature, no
+Every floor here needs probabilities read from the RAW head: no temperature, no
 truncation. sglang does NOT do this by default. In srt/layers/sampler.py:189 the
 standard decode path runs
 

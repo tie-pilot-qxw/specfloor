@@ -29,7 +29,7 @@ Two rungs are measured here.
           then contributes to the cell, so ESS -- not bucket occupancy -- is the
           binding constraint. See derivations/TK_OCCUPANCY.md.
 
-The estimator of min_q is the common-level weighted quantile (PROTOCOL 6b.2):
+The estimator of min_q is the common-level weighted quantile:
 the TV barycentre is an L1 object, so it is a MEDIAN-type point, not the mixture
 E[p_Z]. The mixture is the LOG-LOSS barycentre, which is why CE_B is right for
 dCE and wrong here; using it overstates T by up to 24% on bimodal families.
@@ -150,7 +150,7 @@ def _qv(pre_v, beta, W):
 def tv_barycentre(ps, ws, target_mass=1.0, iters=50):
     """argmin_q sum_i w_i TV(p_i, q) over the simplex of mass `target_mass`.
 
-    KKT gives a COMMON quantile level across coordinates (PROTOCOL 6b.2); the
+    KKT gives a COMMON quantile level across coordinates; the
     level is pinned by the mass constraint and the sum is monotone in beta, so
     bisection finds it. The minimiser is not always unique -- see the tie
     handling below, which is load-bearing rather than cosmetic.

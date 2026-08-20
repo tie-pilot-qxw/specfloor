@@ -11,7 +11,7 @@ a full re-prefill of the whole prefix; under sglang the prefix sits in the radix
 cache and only the <= gamma divergent tokens are new work, which is what makes
 the pass affordable at all. The budget is nonetheless controlled by ANCHOR
 SUBSAMPLING -- run this only on informative anchors identified by the cheap pass,
-stratified, per PROTOCOL.md sec.3.
+stratified.
 
 Usage:
   python -m specfloor.probe_rm --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \

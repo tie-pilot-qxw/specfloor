@@ -157,7 +157,7 @@ def main() -> None:
 
     if args.corpus in C.PART_I_ONLY:
         raise SystemExit(
-            f"{args.corpus} is Part-I-only (see PROTOCOL.md sec.5): the drafter "
+            f"{args.corpus} is a target-only contract: the drafter "
             f"was trained thinking-off, so a drafter NLL here measures transfer, "
             f"not context depth.")
 

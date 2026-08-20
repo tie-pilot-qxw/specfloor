@@ -1,6 +1,6 @@
 """MC convergence ladder: the evidence that MAIN_M is large enough.
 
-PROTOCOL.md sec.4 step 4. With the per-anchor SE target withdrawn, this is the
+The M-convergence evidence. With the per-anchor SE target withdrawn, this is the
 ONLY formal justification for MAIN_M -- there is no per-anchor accuracy
 guarantee standing behind it. The claim it must support is narrow and specific:
 

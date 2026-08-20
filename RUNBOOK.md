@@ -182,7 +182,12 @@ make `sampling_seed` silently ignored and the run irreproducible.
 
 ## Run order
 
-Matches `PROTOCOL.md` §10. Steps 1–2 need no GPU.
+Steps 1--2 need no GPU. Every constant these steps take comes from
+`config.py`; no probe carries its own default, so a drift between two runs is
+a diff in one file rather than an archaeology problem.
+
+A naming note, because the flag and the paper differ: `--rungs 0,1` selects
+the **order** of the chain the floor is computed for. Rung $m$ is $T^{(m)}$.
 
 ```bash
 # 1. corpus  (C0 = intrinsic, C1 = deployment-matched; same prompt IDs)
@@ -230,8 +235,8 @@ share the anchors and the ladder file but not the estimator.
 ```bash
 # 8. the floors. T^(0) is the unconditional barycentre radius, T^(1) the one a
 #    head that has seen Z_{k-1} is allowed to reach. --split holds out half the
-#    paths to price the plug-in bias of the conditional rung, which is the only
-#    rung where it is not negligible.
+#    paths to price the plug-in bias at order 1, which is the only order where
+#    it is not negligible.
 python -m specfloor.probe_tk --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.ladder.M512.jsonl --out runs/tk/gsm8k.t01.jsonl \
     --anchors 96 --paths 1024 --top-k 256 --rungs 0,1 --split
@@ -278,7 +283,7 @@ python -m specfloor.probe_kmedian --corpus C0 --corpus-file runs/C0/gsm8k.jsonl 
     --anchors 32 --paths 256 --widths 1,2,4
 python -m specfloor.kmedian_report --branch 'runs/branch/*.tb.jsonl'
 
-# 11. single-slot best response. probe_br records ONLY (realised token, target
+# 13. single-slot best response. probe_br records ONLY (realised token, target
 #     p, drafter q) per path per slot -- no [M, V] rows -- which is what makes
 #     M=1024 affordable here when the floor probes run at 256. The water
 #     filling and the cross-fit live in br_report, so re-splitting or
@@ -288,14 +293,14 @@ python -m specfloor.probe_br --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --out runs/br/gsm8k.br0.jsonl --anchors 96 --paths 1024
 python -m specfloor.br_report --br 'runs/br/*.br0.jsonl' --by-domain
 
-# 12. the same swept to a fixed point. No GPU at all: the water fill returns a
+# 14. the same swept to a fixed point. No GPU at all: the water fill returns a
 #     distribution on exactly the realised tokens, so every round's accept
-#     factors are readable from the files step 11 already wrote. Both sweep
+#     factors are readable from the files step 13 already wrote. Both sweep
 #     orders are run -- compare them only once BOTH have converged, since
 #     before that the gap is a rate difference and says nothing.
 python -m specfloor.br_iter --br 'runs/br/*.br0.jsonl' --rounds 8 --by-domain
 
-# 13. what a top-20 read costs, if you need to defend a truncated endpoint.
+# 15. what a narrower vocabulary read costs, if you need to defend a truncated endpoint.
 #     Re-read the SAME anchors with --top-k 20 and nothing else changed, so
 #     the comparison is paired per (anchor, slot). It must be paired: a top-20
 #     read fails the residual gate far more often, so the two columns as
@@ -303,7 +308,40 @@ python -m specfloor.br_iter --br 'runs/br/*.br0.jsonl' --rounds 8 --by-domain
 python -m specfloor.probe_tk --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.ladder.M512.jsonl --out runs/tk20/gsm8k.t01.tk20.jsonl \
     --anchors 96 --paths 256 --top-k 20 --rungs 0,1 --split
+python -m specfloor.topk_compare --narrow 'runs/tk20/*.t01.tk20.jsonl' \
+    --wide 'runs/t1/*.t01.m256.jsonl'
+
+# 16. the truncated sampling law. Everything above is at C0; C1 is the law the
+#     drafters' training data was generated at, and under it BOTH the trajectory
+#     law and the verification distribution are warped. Same anchors, same
+#     prefixes, only the law changed -- which is what makes it a check on the
+#     conclusion rather than a second experiment.
+python -m specfloor.probe_rpre --corpus C1 --corpus-file runs/C1/gsm8k.jsonl \
+    --cheap runs/C1/gsm8k.ladder.M512.jsonl --drafter $DRAFT --order 0 \
+    --cond both --out runs/rpre_c1/gsm8k.r0.jsonl --anchors 96 --paths 256 --split
+python -m specfloor.rpre_report --rpre 'runs/rpre_c1/*.r0.jsonl' --order 0
+
+# 17. the log-loss companion, and the check that the ESS gate is not selecting
+#     the answer. Relaxing the gate nearly doubles the population described; if
+#     the number moved, the gate would be doing the work rather than the data.
+python -m specfloor.probe_rm --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
+    --cheap runs/C0/gsm8k.cheap.jsonl --out runs/rm/gsm8k.rm.jsonl
+python -m specfloor.rm_compare --rm 'runs/rm/*.rm.jsonl' --ess 32 --by-domain
 ```
+
+### Two things about the API step that are easy to get wrong
+
+`probe_api_floor` writes one file per cohort. If a pilot cohort was run at a
+different `M`, its anchors are a different population and must not be globbed
+into the report — pass a pattern that selects the main cohorts only, or the
+printed floor is a mean over two designs.
+
+And an endpoint's `top_logprobs` cap is not a harmless approximation. Step 15
+exists because a narrow read leaves the value it *can* compute alone and instead
+fails to resolve cells — and the cells it loses are the ones with the largest
+floors, since a large floor is exactly a family spread across many tokens. The
+bias is a selection effect, invisible in any residual diagnostic, and directed
+downward. Run step 15 before quoting a floor measured through an endpoint.
 
 `--kv-budget-gib` sets the chunk size, and the chunk is where the sampler's
 stream is consumed, so two runs at different budgets are different draws from the

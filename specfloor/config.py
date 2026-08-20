@@ -1,4 +1,7 @@
-"""Frozen measurement constants. See paper/PROTOCOL.md v2.
+"""Frozen measurement constants -- the single place any of them is written down.
+
+No probe takes its own default. A constant that appears here and nowhere else
+is a constant two runs cannot silently disagree about.
 
 Nothing in this file may change once the main run starts. Every probe imports
 from here rather than taking its own default, so a config drift is impossible
@@ -77,7 +80,7 @@ RM_ELIGIBILITY_THRESHOLD = 0.05     # eps_R: R_m only
 # MAIN_M = 512, SET BY THE LADDER -- not by intuition. The first draft guessed
 # 64; the ladder rejected 64, then 128, then 256.
 #
-# Criterion (PROTOCOL.md sec.4): MC approximation error as a fraction of the
+# Criterion: MC approximation error as a fraction of the
 # SAMPLING CI half-width at the richer arm. <=0.25 passes (total uncertainty
 # inflates by sqrt(1+0.25^2) = 3%), >=0.5 fails. NOT statistical significance of
 # the difference: the arms are nested, so the paired CI is tight enough that any
@@ -175,7 +178,7 @@ PREFERRED_PAIRED_SEQUENCES = 256
 
 # ------------------------------------------------- capacity equivalence -----
 # delta is NOT fixed here: it must be calibrated against the harness's own
-# reproducibility first (same checkpoint, two seeds). See PROTOCOL.md sec.7.
+# reproducibility first (same checkpoint, two seeds).
 EQUIVALENCE_DELTA = None            # set after calibration, then frozen
 
 SEED = 20260818

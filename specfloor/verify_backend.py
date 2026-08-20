@@ -270,7 +270,7 @@ def phase_cmp(args):
         print("  -> near-threshold anchors are backend-sensitive; quote "
               "incidence with this\n     flip rate, and do not read individual "
               "near-threshold anchors.")
-    print(f"  PROTOCOL.md EQUIVALENCE_DELTA should be set no tighter than "
+    print(f"  EQUIVALENCE_DELTA in config.py should be no tighter than "
           f"{dce_max:.3f} nats.")
 
 
