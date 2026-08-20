@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specfloor"
+version = "0.1.0"
+description = "Information floors and model gaps for block speculative decoding"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+# Deliberately minimal. Everything that computes a floor, and every report,
+# runs on these. The heavy pieces are optional because the measurement itself
+# splits that way: a floor needs the target alone, a gap needs a drafter.
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+]
+
+[project.optional-dependencies]
+# Sampling rollouts locally. The API probe and every *_report module run
+# without it.
+serve = ["sglang>=0.4"]
+# Measuring a DRAFTER's risk R additionally needs DeepSpec, which is not on
+# PyPI. Install it from source and point SPECFLOOR_DEEPSPEC at the checkout;
+# see specfloor/_deepspec.py.
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["specfloor*"]
+
+[tool.setuptools.package-data]
+specfloor = ["*.md"]
