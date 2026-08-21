@@ -246,7 +246,8 @@ def main() -> None:
     ap.add_argument("--tk", default=None, help="probe_tk output, for the T cross-check")
     ap.add_argument("--boot", type=int, default=C.BOOTSTRAP_B)
     ap.add_argument("--seed", type=int, default=C.SEED)
-    ap.add_argument("--resid-gate", type=float, default=1e-3)
+    ap.add_argument("--resid-gate", type=float, default=float("inf"),
+                    help="drop cells whose top-k truncation residual exceeds this. OFF by default: a gate is a selection rule and the cells it removes are the heavy-tailed ones, which are the high-floor ones, so it biases the mean down by orders of magnitude more than the residual it insures against. The residual is reported instead, and bounds |T - T~| two-sidedly.")
     args = ap.parse_args()
 
     by, bad = load(args.rpre)

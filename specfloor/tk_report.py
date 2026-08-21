@@ -17,9 +17,14 @@ Three things are read alongside every T:
   silently applied; if it is comparable to T itself the slot is not reportable.
 
 * resid -- the probability mass the top-k truncation missed, averaged over
-  paths. TV is a total-variation distance over the FULL vocabulary, and mass
-  outside the top-k can only be bounded, not resolved. Slots above
-  --resid-gate are dropped and counted.
+  paths. Renormalising the retained support gives TV(p, p~) = r exactly, so
+  the residual BOUNDS the error two-sidedly: |T - T~| <= E[r]. It is reported
+  beside every T and nothing is dropped for it. --resid-gate exists to
+  reproduce the old behaviour and is off by default, because a gate is a
+  selection rule: the cells it removes are the ones whose families spread
+  past the window, which are the ones carrying the floor. On the frontier
+  top-20 read that trade costs 0.018 of a 0.245 estimate to insure against a
+  band of 0.0002.
 
 * ess -- effective sample size of the path weights. At rung 0 there is no
   importance weighting so ess == M by construction; it becomes informative at
@@ -139,8 +144,8 @@ def table(name, recs, args, rungs, slots):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tk", required=True, help="glob of probe_tk output files")
-    ap.add_argument("--resid-gate", type=float, default=1e-3,
-                    help="max top-k truncation mass tolerated per cell")
+    ap.add_argument("--resid-gate", type=float, default=float("inf"),
+                    help="drop cells whose top-k truncation residual exceeds this. OFF by default: a gate is a selection rule and the cells it removes are the heavy-tailed ones, which are the high-floor ones, so it biases the mean down by orders of magnitude more than the residual it insures against. The residual is reported instead, and bounds |T - T~| two-sidedly.")
     ap.add_argument("--ess-gate", type=float, default=0.0,
                     help="min effective sample size (informative at rung >= 1)")
     ap.add_argument("--curse-frac", type=float, default=0.10,

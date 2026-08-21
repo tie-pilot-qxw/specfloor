@@ -98,7 +98,8 @@ def table(name, rows, args):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", required=True)
-    ap.add_argument("--resid-gate", type=float, default=1e-3)
+    ap.add_argument("--resid-gate", type=float, default=float("inf"),
+                    help="drop cells whose top-k truncation residual exceeds this. OFF by default: a gate is a selection rule and the cells it removes are the heavy-tailed ones, which are the high-floor ones, so it biases the mean down by orders of magnitude more than the residual it insures against. The residual is reported instead, and bounds |T - T~| two-sidedly.")
     ap.add_argument("--boot", type=int, default=10000)
     ap.add_argument("--seed", type=int, default=20260818)
     ap.add_argument("--by-domain", action="store_true")
