@@ -470,6 +470,11 @@ def rollout(target, prefix_ids, M, K, policy, stop_ids, gen, kv_budget_bytes):
 
 
 # -------------------------------------------------------------------- main ---
+# The decorator is load-bearing, not hygiene. Every helper below carries its
+# own, but the hidden-state pass in the loop is called bare, and a 48-layer
+# target at 3k context retains ~16 MiB per token of autograd graph -- 46 GiB
+# on one anchor, which is what cost the scale run its long-context domain.
+@torch.no_grad()
 def main() -> None:
     ap_ = argparse.ArgumentParser()
     ap_.add_argument("--corpus", default="C0", choices=sorted(C.CORPORA))
