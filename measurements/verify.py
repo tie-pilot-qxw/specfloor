@@ -83,6 +83,31 @@ def main():
     for slot, paper in ((2, 0.0040), (5, 0.0217)):
         check(f"T^(1) at slot {slot}", paper, cell(t1, "T", slot, "1"))
 
+    print("App    the two T^(1) estimators, same 384 anchors (app:t1gap)")
+    o1 = load("rpre_o1/*.rpre1.jsonl.gz")
+    grp = {(r["prompt_id"], r["t"]): r for r in o1}
+    #   slot 1 is T^(1) = 0 by identity. SNIS returns it exactly -- its free
+    #   segment is empty there, so all M sequences coincide and the family it
+    #   minimises over is a point mass. Grouping does not: it compares paths
+    #   that shared a batched bf16 decode, which is the 1e-3 arithmetic floor.
+    def cond(recs, key, slot):
+        vals = [((r.get("T1") or {}).get(str(slot), {}).get(key), w(r))
+                for r in recs]
+        return wmean([(v, x) for v, x in vals if v is not None])
+    for slot, a_fit, b_fit in ((1, 0.0000, 0.0009), (6, 0.0185, 0.0327)):
+        check(f"slot {slot}  SNIS fit-and-score", a_fit, cell(t1, "T", slot, "1"))
+        check(f"slot {slot}  grouping fit-and-score", b_fit, cond(o1, "plug", slot))
+    check("slot 6  grouping held-out", 0.0413, cond(o1, "split", 6))
+    paired = [(g - s, w(grp[k])) for k, r in ((k, r) for k, r in
+              ((( r["prompt_id"], r["t"]), r) for r in t1))
+              if k in grp
+              for s in [(r.get("T_split") or {}).get("1", {}).get("6")]
+              for g in [(grp[k].get("T1") or {}).get("6", {}).get("split")]
+              if s is not None and g is not None]
+    check("slot 6  paired, held-out vs held-out", 0.0203, wmean(paired))
+    print(f"  -- grouping larger on {sum(1 for v, _ in paired if v > 0)}"
+          f"/{len(paired)} anchors")
+
     print("Sec 5  DFlash against its own floor, four domains")
     check("R at slot 6", 0.6359, cell(rp, "R", 6))
     check("G/R at slot 6", 0.550,
