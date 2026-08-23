@@ -110,6 +110,17 @@ def main():
     o1k = load("rpre_o1_m1024/*.rpre1.jsonl.gz")
     check("slot 6  grouping M=1024 fit-and-score", 0.0352, cond(o1k, "plug", 6))
     check("slot 6  grouping M=1024 held-out", 0.0393, cond(o1k, "split", 6))
+    #   the same test on the other estimator. Neither column is unbiased -- one
+    #   is the winner's curse, the other a half-sample fit -- so an estimator
+    #   carrying only those two has a STABLE MIDPOINT as M grows, and its
+    #   fit-and-score must rise. Grouping does both; SNIS does neither.
+    a256 = load("t1/*.t01.m256.jsonl.gz")
+    check("slot 6  SNIS M=256 fit-and-score", 0.0192, cell(a256, "T", 6, "1"))
+    check("slot 6  SNIS M=256 held-out", 0.0258, cell(a256, "T_split", 6, "1"))
+    for name, lo, hi in (("SNIS", (0.0192 + 0.0258) / 2, (0.0185 + 0.0210) / 2),
+                         ("grouping", (0.0327 + 0.0413) / 2, (0.0352 + 0.0393) / 2)):
+        print(f"  -- {name:8s} midpoint  M=256 {lo:.4f} -> M=1024 {hi:.4f}"
+              f"   shift {hi - lo:+.4f}")
     print(f"  -- grouping larger on {sum(1 for v, _ in paired if v > 0)}"
           f"/{len(paired)} anchors")
 
