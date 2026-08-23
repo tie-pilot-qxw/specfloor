@@ -1,0 +1,75 @@
+# measurements
+
+Every recorded run behind the paper, as the probes wrote it. 230 MB of `jsonl`
+stored gzipped at 31 MB; `.sh` and `.py` are kept plain so they read on the web.
+`MANIFEST.tsv` carries the row count, the raw size and the raw SHA-256 of every
+file, so a decompressed copy can be checked against what was measured.
+
+Nothing here is post-processed. The reports in the package read these files and
+produce the tables; if a number in the paper disagrees with what a report prints
+off this directory, the paper is wrong.
+
+```bash
+python -m measurements.verify              # recompute the headline numbers
+zcat measurements/t0_s6/gsm8k.t0.jsonl.gz | head -1 | python -m json.tool
+```
+
+## What produced what
+
+| directory | probe | what it holds | paper |
+|---|---|---|---|
+| `calib_20260818/` | `corpus`, `anchors`, `probe_cheap` | the C0 corpora, the stratified anchor sets with their inclusion probabilities, and the `M=512` ladder every probe selects anchors from | §2 |
+| `t0_s6/` | `probe_tk` | `T^(0)`, top-256, `M=1024`, all seven slots. The headline floor | §3 |
+| `t1/` | `probe_tk` | `T^(0)` and `T^(1)` in one run, so `ΔT₁` is paired on identical paths | §4 |
+| `tk/` | `probe_tk` | `M=256` arm of the path-count check | §6 |
+| `tk20/` | `probe_tk` | the same anchors re-read at top-20, to calibrate the frontier read | §6 |
+| `branch/` | `probe_kmedian` | the `K`-median of the realisation family in total variation, `K ∈ {1,2,4}` | §3 |
+| `rpre/` | `probe_rpre` | DFlash's risk `R` and gap `G`, full vocabulary, exact TV | §5 |
+| `rpre_o1/` | `probe_rpre --order 1` | DSpark's `R^oracle`, `R^self`, `T^(1)` and the exposure penalty | §5 |
+| `rpre_c1/` | `probe_rpre` | the same under the truncated sampling law C1 | §6 |
+| `gate_c1/` | `corpus` | the C1 corpus and its cross-engine verification | §6 |
+| `srv/` | `probe_rpre` | per-path accept factors, for the free-rollout / serving reweighting | §7 |
+| `br/` | `probe_br` | the per-path scalars the water fill and the swept fixed point run on. The largest thing here, and the one that cannot be regenerated without a GPU | §7 |
+| `rm_snis/`, `rm_m512/` | `probe_rm` | the log-loss companion `ρ_m` at `M=64` and `M=512` | §4 |
+| `api_v4/` | `probe_api_floor` | DeepSeek-V4-Pro through its API: prompts, per-slot floors, both cohorts | §6 |
+| `scale/` | full pipeline | Qwen3-8B, Qwen3-14B, Gemma-4-12B, each with its own corpus under `C0/` | §6 |
+
+`scale/_smoke/` and the `SMOKE`/`PILOT` files are three-anchor dry runs kept
+because the run scripts reference them; they are not in any table.
+
+## Two things in here that are evidence rather than data
+
+**`*.jsonl.pre-oomfix`** are the superseded arena-hard runs from before the
+`no_grad` fix in `probe_rpre`. They are kept so the recovery is checkable:
+`scale/compare_rerun.py old new` verifies that the chunking is identical, that
+the anchors the old run *did* keep reproduce within Monte Carlo noise, and that
+the only difference is anchors gained. Gemma-4-12B gained 39 of 96 on
+arena-hard, Qwen3-8B 9.
+
+**`tk/gsm8k.t0.jsonl.CORRUPT-two-writers`** is what two probe processes sharing
+one output file produce: records spliced at overlapping write offsets, some of
+which still parse. It is kept because `tk_report.load` counts malformed lines
+rather than skipping them silently, and this is the fixture that behaviour
+exists for.
+
+## Reading a record
+
+Fields are per (anchor, slot). Every file carries `pi`, the anchor's inclusion
+probability under the stratified sampler; every mean in the paper is
+Hájek-weighted by `1/pi` and every interval is a cluster bootstrap over
+*prompts*, because anchors from one prompt share a prefix.
+
+```
+prompt_id  t  context  stratum  pi  corpus  M  top_k
+T          {order: {slot: value}}      the floor
+resid      {order: {slot: value}}      top-K truncation mass, which BOUNDS
+                                       |T - T~| two-sidedly. Nothing is dropped
+                                       for it; see specfloor/tk_report.py
+ess        {order: {slot: value}}      effective sample size of the path weights
+T_split    fit on half the paths, scored on the other half
+R, G       drafter risk and gap (rpre only)
+S, abar    survival weights and mean accept factors (srv only)
+chunk      paths per prefill, a deterministic function of (context, K, budget).
+           Two runs with different chunk values consumed the sampler's random
+           stream differently and are not comparable path-for-path.
+```

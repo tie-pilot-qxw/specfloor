@@ -144,3 +144,19 @@ not.
 
 See [`RUNBOOK.md`](RUNBOOK.md) for the full sequence and the flags each step
 needs.
+
+## The runs themselves
+
+[`measurements/`](measurements/) holds every record behind the paper as the
+probes wrote it — four targets, four domains, both drafters, the API cohort and
+the per-path accept-factor recordings — 230 MB of `jsonl` stored gzipped at 31
+MB, with a manifest carrying the row count and raw SHA-256 of each file.
+
+```bash
+python -m measurements.verify
+```
+
+reads that directory and prints every headline number in the paper beside the
+value it recomputes from the records, with the estimator the paper describes.
+It is the only claim this repository makes that does not need a GPU to check.
+
