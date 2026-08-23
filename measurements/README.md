@@ -23,7 +23,7 @@ zcat measurements/t0_s6/gsm8k.t0.jsonl.gz | head -1 | python -m json.tool
 |---|---|---|---|
 | `calib_20260818/` | `corpus`, `anchors`, `probe_cheap` | the C0 corpora, the stratified anchor sets with their inclusion probabilities, and the `M=512` ladder every probe selects anchors from | §2 |
 | `t0_s6/` | `probe_tk` | `T^(0)`, top-256, `M=1024`, all seven slots. The headline floor | §3 |
-| `t1/` | `probe_tk` | `T^(0)` and `T^(1)` in one run, so `ΔT₁` is paired on identical paths | §4 |
+| `t1_fix/` | `probe_tk` | the importance-sampling route to `T^(1)`, at `M=1024` and `M=256`, on the anchors `rpre_o1/` also covers | §4 |
 | `tk/` | `probe_tk` | `M=256` arm of the path-count check | §6 |
 | `tk20/` | `probe_tk` | the same anchors re-read at top-20, to calibrate the frontier read | §6 |
 | `branch/` | `probe_kmedian` | the `K`-median of the realisation family in total variation, `K ∈ {1,2,4}` | §3 |
@@ -40,28 +40,6 @@ zcat measurements/t0_s6/gsm8k.t0.jsonl.gz | head -1 | python -m json.tool
 
 `scale/_smoke/` and the `SMOKE`/`PILOT` files are three-anchor dry runs kept
 because the run scripts reference them; they are not in any table.
-
-## One field in here is known wrong
-
-`probe_tk` assembled its forced-suffix sequences without a token at position
-`|X|+k`. The backend returns one row per token and row `i` is the distribution
-that *predicted* token `i`, so the last row was the one predicting the last
-**revealed** token, not slot `k`. The importance weights were read from that same
-row and are correct; the family they weighted is one slot short of the estimand.
-
-So in every file written by `probe_tk`, `T["1"]`, `T_split["1"]` and `resid["1"]`
-are **not** `T^(1)` — they are the weighted spread of `p(.|X,s)`. That is
-`t1/`, `tk20/` and `scale/*/*.t01.jsonl`. `ess["1"]` is unaffected: the weights
-were right. `t1_fix/` is the same measurement after the fix.
-
-Order 0 is unaffected everywhere, and not only by inspection: rung 0 already
-appended the trailing token (the code comment says why), and `verify.py` checks
-the alignment end to end by comparing `probe_tk` against `probe_rpre`, which
-reads `p` from the forward that samples the token and so has no row to choose.
-`T^(0)` steps 0.034–0.078 between adjacent slots and the two agree to
-0.0007–0.0034 at every slot. `probe_rpre`, `probe_api_floor` and `probe_rm` are
-correct by construction — the first two never rescore, and `probe_rm` has always
-built the sequence with the trailing token.
 
 ## Two things in here that are evidence rather than data
 

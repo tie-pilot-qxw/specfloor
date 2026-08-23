@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import json
 import pathlib
 import shutil
 import sys
@@ -25,6 +26,16 @@ DEST = HERE / "measurements"
 GZIP = (".jsonl", ".log")
 PLAIN = (".sh", ".py", ".md", ".tsv", ".txt")
 SKIP_DIRS = {"__pycache__", ".git", ".ipynb_checkpoints"}
+
+# Runs the archive does not carry, because a later run covers the same anchors
+# under the same configuration and the archive should hold one answer per
+# question, not a history of them.
+SKIP_PATHS = ("t1/",)
+
+# probe_tk's m>=1 columns are carried only by t1_fix/. Elsewhere the probe was
+# run with --rungs 0,1 for the order-0 column alone, and the order-1 fields
+# those runs also emitted are dropped rather than shipped unused.
+DROP_ORDER1 = ("tk20/", "scale/")
 
 
 def digest(path: pathlib.Path) -> tuple[str, int, int]:
@@ -62,6 +73,8 @@ def main() -> int:
         if not path.is_file() or any(p in SKIP_DIRS for p in path.parts):
             continue
         rel = path.relative_to(src)
+        if any(str(rel).startswith(p_) for p_ in SKIP_PATHS):
+            continue
         if only and not any(str(rel).startswith(o) for o in only):
             continue
         suffix = "".join(pathlib.Path(rel.name).suffixes)
@@ -78,12 +91,36 @@ def main() -> int:
             man[key][3] = str(out.stat().st_size)
             continue
         out.parent.mkdir(parents=True, exist_ok=True)
-        if gz:
+        drop = (str(rel).startswith(DROP_ORDER1) and rel.name.endswith(".jsonl"))
+        if drop:
+            buf = []
+            with open(path) as fi:
+                for line in fi:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    rec = json.loads(line)
+                    for fld in ("T", "T_split", "resid", "ess"):
+                        if isinstance(rec.get(fld), dict):
+                            rec[fld].pop("1", None)
+                    buf.append(json.dumps(rec) + "\n")
+            with gzip.GzipFile(out, "wb", 9, mtime=0) as fo:
+                fo.write("".join(buf).encode())
+        elif gz:
             # mtime=0 so an unchanged input produces a byte-identical archive.
             with open(path, "rb") as fi, gzip.GzipFile(out, "wb", 9, mtime=0) as fo:
                 shutil.copyfileobj(fi, fo)
         else:
             shutil.copyfile(path, out)
+        # The digest recorded is of what the archive HOLDS, so a decompressed
+        # copy can always be checked against MANIFEST.tsv.
+        if drop:
+            h = hashlib.sha256()
+            with gzip.open(out, "rb") as fh:
+                while chunk := fh.read(1 << 20):
+                    h.update(chunk)
+            sha, raw = h.hexdigest(), sum(len(b.encode()) for b in buf)
+            rows = len(buf)
         man[key] = [key, str(rows) if path.suffix == ".jsonl" else "",
                     str(raw), str(out.stat().st_size), sha]
         wrote += 1

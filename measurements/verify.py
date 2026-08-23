@@ -91,6 +91,26 @@ def main():
         check(f"T^(0) at slot {slot}", t0, cell(o1, "T", slot))
         check(f"T^(1) at slot {slot} (held-out)", t1, cond(o1, "split", slot))
 
+    print("App    T^(1) from the other route, and the two paired")
+    #   t1_fix reweights prior draws onto the revealed predecessor; rpre_o1
+    #   keeps the draws whose predecessor already matched. No shared estimator
+    #   code, different engine, different vocabulary read.
+    snis = load("t1_fix/*.t01.jsonl.gz", skip=("m256", "SMOKE"))
+    pair = {(r["prompt_id"], r["t"]): r for r in snis}
+    check("slot 1  reweighting route (0 by identity)", 0.0000,
+          cell(snis, "T", 1, "1"))
+    check("slot 6  reweighting route, held-out", 0.0382,
+          cell(snis, "T_split", 6, "1"))
+    diffs = []
+    for r in o1:
+        k = (r["prompt_id"], r["t"])
+        sn = ((pair.get(k, {}).get("T_split") or {}).get("1") or {}).get("6")
+        gp = ((r.get("T1") or {}).get("6") or {}).get("split")
+        if sn is not None and gp is not None:
+            diffs.append((gp - sn, w(r)))
+    check("slot 6  paired difference between the routes", 0.0032, wmean(diffs))
+    print(f"  -- {len(diffs)} shared anchors")
+
     print("App    T^(0) alignment: two implementations, no shared estimator code")
     #   probe_tk reaches slot k by teacher-forced rescoring and has to pick the
     #   right row; probe_rpre reads p from the forward that samples the token
