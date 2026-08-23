@@ -270,6 +270,36 @@ def rm_report(rm, slot_range=None):
             row += f"{fmt(*hierarchical_bootstrap(sub, f), pct=True, nd=1):>26}"
         print(row)
 
+    # Pooled across the reported slots, as one ratio of population sums rather
+    # than an average of the per-slot ratios: numerator and denominator are the
+    # same expectations at every slot, so they add.
+    def pooled(rs, _m):
+        num, den, w = [], [], []
+        for r in rs:
+            ww = 1.0 / max(r.get("pi", 1.0), 1e-9)
+            for kk in slots:
+                n = (r.get("num", {}).get(str(_m), {}) or {}).get(str(kk))
+                d = (r.get("den", {}) or {}).get(str(kk))
+                if n is None or d is None or n != n or d != d:
+                    continue
+                num.append(n); den.append(d); w.append(ww)
+        if not num:
+            return float("nan")
+        dd = wmean(den, w)
+        return wmean(num, w) / dd if dd > 0 else float("nan")
+
+    if not legacy:
+        row = f"   {'all':>5}"
+        for m in C.RM_ORDERS:
+            sub = [r for r in rm if any(
+                (r.get("num", {}).get(str(m), {}) or {}).get(str(kk)) is not None
+                for kk in slots)]
+            if n_clusters(sub) < C.MIN_INFORMATIVE_PER_CELL:
+                row += f"{'n<min':>26}"
+                continue
+            row += f"{fmt(*hierarchical_bootstrap(sub, lambda rs, _m=m: pooled(rs, _m)), pct=True, nd=1):>26}"
+        print(row)
+
     # H2 wording gate -- decided by the CI, never written in advance
     if legacy:
         sub = [r for r in rm if r["R"]["2"].get(str(K - 1)) is not None]

@@ -173,13 +173,24 @@ def sample_paths(eng, prefix, n, policy, K, stop_ids, seed_base):
     """
     res = eng.generate_ids([list(prefix)] * n, policy, K - 1, stop_ids,
                            seed=[seed_base + i for i in range(n)])
-    paths, alive = [], []
+    paths, nlive = [], []
     for p, _finish in res:
-        alive.append(len(p) >= K - 1)
         p = p[: K - 1]
-        p += [stop_ids[0]] * (K - 1 - len(p))       # freeze on the stop token
+        # How many REAL tokens this path produced. Slot k reads
+        # p(gt[k] | prefix, path[:k]) and needs k real tokens, so this path is
+        # admissible at slots 0..nlive and at no slot beyond.
+        nlive.append(len(p))
+        # The tail is still padded, because the scoring call wants one shape for
+        # every sequence -- but the padded rows are DROPPED per slot rather than
+        # averaged in. Scoring them would query the model after
+        # prefix + EOS + EOS ..., which is neither the rollout law (the path is
+        # over) nor an absorbing state (the model happily continues), and the
+        # full-vocabulary rollout in probe_rpre removes those paths outright, so
+        # keeping them here would have the two implementations measuring
+        # different post-EOS populations.
+        p += [stop_ids[0]] * (K - 1 - len(p))
         paths.append(p)
-    return paths, alive
+    return paths, nlive
 
 
 def score_paths(eng, prefix, gt, paths, K):
@@ -289,19 +300,20 @@ def main() -> None:
             # is salted per interpreter for str, so the run would be
             # irreproducible across processes.
             sb = anchor_seed(a["prompt_id"], a["t"], C.SEED)
-            paths, alive = sample_paths(eng, prefix, args.m_base, policy, K,
+            paths, nlive = sample_paths(eng, prefix, args.m_base, policy, K,
                                         stop_ids, sb)
             probs = score_paths(eng, prefix, gt, paths, K)
-            pg = [[probs[m][k] for m in range(len(probs))] for k in range(K)]
+            pg = [[probs[m][k] for m in range(len(probs)) if k <= nlive[m]]
+                  for k in range(K)]
 
             m = args.m_base
             while m < args.m_max and needs_escalation(pg, ce_a):
-                more, al = sample_paths(eng, prefix, m, policy, K, stop_ids,
+                more, nl = sample_paths(eng, prefix, m, policy, K, stop_ids,
                                         sb + m * 7919)
                 pr = score_paths(eng, prefix, gt, more, K)
                 for k in range(K):
-                    pg[k] += [pr[mm][k] for mm in range(len(pr))]
-                alive += al
+                    pg[k] += [pr[mm][k] for mm in range(len(pr)) if k <= nl[mm]]
+                nlive += nl
                 m *= 2
                 n_esc += 1
             ce_b_plug, ce_b, se, jk_bad = [], [], [], []
@@ -312,7 +324,7 @@ def main() -> None:
                     jk_bad.append(k)
             n_jk_bad += bool(jk_bad)
             ce_commit = [sum(-math.log(max(x, 1e-12)) for x in pg[k]) / len(pg[k])
-                         for k in range(K)]
+                         if pg[k] else None for k in range(K)]
 
             dce = [b - x for b, x in zip(ce_b, ce_a)]
             # slots where MC noise could still flip the eps_info classification
@@ -329,7 +341,9 @@ def main() -> None:
                 "M": m,
                 "ambiguous_slots": amb,
                 "jk_unstable_slots": jk_bad,
-                "paths_alive_at_end": int(sum(alive)),
+                "paths_alive_at_end": int(sum(1 for v in nlive if v >= K - 1)),
+                "paths_scored_per_slot": [sum(1 for v in nlive if k <= v)
+                                          for k in range(K)],
                 "ce_A": ce_a,
                 "ce_B": ce_b,              # jackknife-corrected: the one to use
                 "ce_B_plugin": ce_b_plug,

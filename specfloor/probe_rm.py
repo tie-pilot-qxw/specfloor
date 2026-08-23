@@ -62,8 +62,18 @@ def select_informative(cheap, budget, slot, seed=C.SEED,
     out, taken = [], {}
     for c in cells:
         rng.shuffle(by[c])
-        out += by[c][:per]
-        taken[c] = min(per, len(by[c]))
+        keep = by[c][:per]
+        # SECOND-STAGE INCLUSION. The anchor file's pi is the probability of
+        # entering the eligible set; this draws without replacement from that
+        # set, so the record's pi must be the PRODUCT or 1/pi over-represents
+        # every stratum that had few eligible anchors to choose from.
+        p2 = min(1.0, per / len(by[c]))
+        for r in keep:
+            r["pi_stage1"] = r.get("pi_stage1", r.get("pi"))
+            r["pi_stage2"] = p2
+            r["pi"] = r["pi_stage1"] * p2
+        out += keep
+        taken[c] = len(keep)
     return out, taken
 
 

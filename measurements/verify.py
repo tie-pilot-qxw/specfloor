@@ -138,10 +138,28 @@ def main():
     print(f"  -- truncation band at slot 6: {sum(res)/len(res):.1e} "
           f"(the reason no cell is gated)")
 
+    def serve_risk_slot6(recs):
+        """Ratio of population sums, per eq:serving-risk.
+
+        Each record carries its own anchor's ratio in R_serve and its arrival
+        mass E[W_5] in S[5]. The serving population weights an anchor by how
+        often it is actually reached, so numerator and denominator are pooled
+        separately and divided once.
+        """
+        num = den = 0.0
+        for r in recs:
+            rs = (r.get("R_serve") or {}).get("6")
+            d = (r.get("S") or {}).get("5")
+            if rs is None or d is None:
+                continue
+            num += rs * w(r) * d
+            den += w(r) * d
+        return num / den if den else float("nan")
+
     print("Sec 7  the serving reweighting, DFlash")
     srv = load("srv/*.srv0.jsonl.gz")
     check("R free at slot 6", 0.6353, cell(srv, "R", 6))
-    check("R serve at slot 6", 0.5835, cell(srv, "R_serve", 6))
+    check("R serve at slot 6", 0.2111, serve_risk_slot6(srv))
     tau = 1 + sum(cell(srv, "S", k) for k in range(7))
     check("tau from the recorded joint", 4.574, tau, tol=5e-3)
 

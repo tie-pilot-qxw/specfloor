@@ -232,9 +232,16 @@ def main() -> None:
     print(f"== {args.corpus}/{args.domain}: {len(prompts)} sequences, "
           f"censor rate {rate:.4%}", flush=True)
     if rate > C.MAX_CENSOR_RATE:
-        print(f"!! censor rate exceeds {C.MAX_CENSOR_RATE:.2%} -- raise "
-              f"--max-new-tokens and regenerate before using this corpus",
-              flush=True)
+        # EXIT NONZERO. Right-censoring truncates the longest responses, which
+        # are exactly the ones that carry the deep context buckets and the late
+        # relative-position stratum, so a corpus over the gate changes both the
+        # block weights and the stratification of everything downstream. This
+        # used to print and exit 0, and a run that exceeded the gate flowed
+        # into published numbers because the next stage only saw success.
+        raise SystemExit(
+            f"!! censor rate {rate:.4%} exceeds {C.MAX_CENSOR_RATE:.2%}. "
+            f"Raise --max-new-tokens and regenerate; this corpus must not be "
+            f"consumed by the anchor or probe stages.")
 
 
 if __name__ == "__main__":

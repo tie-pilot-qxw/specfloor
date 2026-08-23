@@ -27,12 +27,49 @@ import random
 
 from specfloor import config as C
 
-# Special/control tokens. refine_exp/tree_sim_q2.py:63 uses the same floor, and
-# markov_order_probe.py:158 documents why it matters: a handful of anchors whose
+# Special/control tokens come from the TOKENIZER, never from a vocabulary range.
+# markov_order_probe.py:158 documents why they matter: a handful of anchors whose
 # block straddles a control token carried ~40% of the PB tail mass. A block
 # containing one is not a normal speculative block.
-SPECIAL_MIN = 151643
-THINK_OPEN, THINK_CLOSE = 151667, 151668
+#
+# This used to be `id >= 151643`, which is where Qwen3's control block starts.
+# On Qwen that is right to the token -- its 14 special ids are 151643..151656 and
+# the rest of the band is reserved and never generated (0 occurrences in 765,962
+# corpus tokens). On any other family it is nonsense in both directions: Gemma-4
+# has a 262,144-token vocabulary whose control tokens sit at ids 0..52 and whose
+# ordinary text runs far past 151643, so the range test dropped 75%-85% of every
+# candidate block while missing every control token it was meant to catch.
+
+
+def special_ids(target: str) -> frozenset:
+    """The tokenizer's own control tokens.
+
+    `all_special_ids` covers the named roles (bos/eos/pad/unk and the extras);
+    `added_tokens_decoder` covers everything registered as an added token, whose
+    `.special` flag is what chat templates key off. Neither alone is complete on
+    both families, so take the union. Refuse to proceed if it is empty rather
+    than fall back to a guess -- an empty set silently disables the filter.
+    """
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(target)
+    ids = {int(i) for i in (tok.all_special_ids or []) if i is not None}
+    for i, t in (getattr(tok, "added_tokens_decoder", None) or {}).items():
+        if getattr(t, "special", False):
+            ids.add(int(i))
+    if not ids:
+        raise SystemExit(
+            f"{target}: the tokenizer exposes no special tokens. Refusing to "
+            f"guess a vocabulary range -- see the note above anchors.special_ids.")
+    return frozenset(ids)
+
+
+def think_close_id(target: str):
+    """The id that closes a reasoning trace, or None if the family has none."""
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(target)
+    i = tok.convert_tokens_to_ids("</think>")
+    unk = getattr(tok, "unk_token_id", None)
+    return None if i is None or i == unk or i < 0 else int(i)
 
 
 def context_bucket(c: int) -> str:
@@ -49,7 +86,8 @@ def relative_bin(u: float) -> str:
     return C.RELATIVE_BINS[-1][0]
 
 
-def eligible(seq: dict, gamma: int = C.GAMMA):
+def eligible(seq: dict, special: frozenset, close_id=None,
+             gamma: int = C.GAMMA):
     """Yield every position that admits a complete, special-token-free block.
 
     A right-censored trajectory has no true EOS, so its trailing block is not a
@@ -68,12 +106,13 @@ def eligible(seq: dict, gamma: int = C.GAMMA):
     ids = seq["response_ids"]
     L = seq["response_len"]
     usable = L - gamma - (gamma if seq.get("right_censored") else 0)
-    close = ids.index(THINK_CLOSE) if THINK_CLOSE in ids else None
+    close = (ids.index(close_id)
+             if close_id is not None and close_id in ids else None)
 
     n_special = 0
     for t in range(usable + 1):
         block = ids[t: t + gamma]
-        if block and max(block) >= SPECIAL_MIN:
+        if block and not special.isdisjoint(block):
             n_special += 1
             continue
         c = seq["prompt_len"] + t
@@ -94,7 +133,7 @@ def eligible(seq: dict, gamma: int = C.GAMMA):
         seq["_dropped_special"] = n_special
 
 
-def build_population(path: str):
+def build_population(path: str, special: frozenset, close_id=None):
     pop, dropped, n_seq = [], 0, 0
     with open(path) as f:
         for line in f:
@@ -103,11 +142,12 @@ def build_population(path: str):
                 continue
             seq = json.loads(line)
             n_seq += 1
-            pop.extend(eligible(seq))
+            pop.extend(eligible(seq, special, close_id))
             dropped += seq.get("_dropped_special", 0)
     if dropped:
-        print(f"  dropped {dropped:,} anchors whose block contained a special "
-              f"token (>= {SPECIAL_MIN}) across {n_seq} sequences "
+        print(f"  dropped {dropped:,} anchors whose block contained one of "
+              f"the tokenizer's {len(special)} special tokens across {n_seq} "
+              f"sequences "
               f"({dropped/(dropped+len(pop))*100:.2f}% of candidates)")
     return pop
 
@@ -180,9 +220,17 @@ def main() -> None:
     ap.add_argument("--budget", type=int, default=C.CHEAP_ANCHORS_PER_DOMAIN)
     ap.add_argument("--estimand", default=C.ESTIMAND, choices=("block", "sequence"))
     ap.add_argument("--seed", type=int, default=C.SEED)
+    ap.add_argument("--target", required=True,
+                    help="the model whose tokenizer defines the special tokens; "
+                         "a vocabulary range is not portable across families")
     args = ap.parse_args()
 
-    pop = build_population(args.corpus_file)
+    special = special_ids(args.target)
+    close_id = think_close_id(args.target)
+    print(f"special tokens from {args.target}: {len(special)} ids, "
+          f"{min(special)}..{max(special)}"
+          + (f"; </think> = {close_id}" if close_id is not None else ""))
+    pop = build_population(args.corpus_file, special, close_id)
     print(f"eligible anchor population: {len(pop):,}")
     hist = collections.Counter(a["cell"] for a in pop)
     for cell in sorted(hist):

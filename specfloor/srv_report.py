@@ -55,8 +55,33 @@ def wmean(pairs):
     return sum(v * w for v, w in pairs) / sw if sw > 0 else float("nan")
 
 
+def serve_risk(cs):
+    r"""Serving risk as a RATIO OF SUMS, not a mean of per-anchor ratios.
+
+        R^serve_k = E[W_k * TV] / E[W_k],   W_k = prod_{i<k} a_i
+
+    Each record already carries its own anchor's ratio in `R_serve`, and its
+    arrival mass E[W_k] is `S[k-1]` (1 at slot 0, since nothing precedes it).
+    Averaging the ratios would weight a rarely-reached anchor the same as one
+    the serving path visits constantly, which is not the serving population.
+    The two differ by a lot here: at slot 6 the mean of ratios reads 0.58 and
+    the ratio of sums reads 0.21, because arrival mass and risk are strongly
+    anti-correlated -- the anchors that survive to slot 6 are the ones the
+    drafter was already agreeing with.
+    """
+    num = sum(c["Rs"] * c["w"] * c["D"] for c in cs
+              if c.get("Rs") is not None and c.get("D") is not None)
+    den = sum(c["w"] * c["D"] for c in cs
+              if c.get("Rs") is not None and c.get("D") is not None)
+    return num / den if den > 0 else float("nan")
+
+
 def boot(cells, key, B, seed):
-    """Prompt-level cluster bootstrap of a Hájek-weighted column."""
+    """Prompt-level cluster bootstrap of a Hájek-weighted column.
+
+    `key` may also be one of the two derived quantities, which are ratios of
+    sums and cannot be written as a weighted mean of a column.
+    """
     by = {}
     for c in cells:
         by.setdefault(c["pid"], []).append(c)
@@ -67,7 +92,13 @@ def boot(cells, key, B, seed):
         s = []
         for _ in range(len(ks)):
             s += by[ks[rng.randrange(len(ks))]]
-        v = wmean([(c[key], c["w"]) for c in s if c.get(key) is not None])
+        if key == "Rs_pop":
+            v = serve_risk(s)
+        elif key == "d_pop":
+            v = serve_risk(s) - wmean([(c["Rf"], c["w"]) for c in s
+                                       if c.get("Rf") is not None])
+        else:
+            v = wmean([(c[key], c["w"]) for c in s if c.get(key) is not None])
         if not math.isnan(v):
             draws.append(v)
     if not draws:
@@ -85,8 +116,11 @@ def cells(recs, k):
         rs = (r.get("R_serve") or {}).get(sk)
         if rf is None or rs is None:
             continue
+        # arrival mass at slot k: E[prod_{i<k} a_i], which is S[k-1]. Slot 0 is
+        # reached by every path, so its arrival mass is 1 by definition.
+        D = 1.0 if k == 0 else (r.get("S") or {}).get(str(k - 1))
         out.append(dict(pid=r["prompt_id"], w=1.0 / max(r.get("pi", 1.0), 1e-9),
-                        Rf=rf, Rs=rs, d=rs - rf,
+                        Rf=rf, Rs=rs, D=D, d=rs - rf,
                         T=(r.get("T") or {}).get(sk),
                         S=(r.get("S") or {}).get(sk),
                         ab=(r.get("abar") or {}).get(sk)))
@@ -123,8 +157,8 @@ def main() -> None:
                 continue
             g = lambda key: wmean([(c[key], c["w"]) for c in cs
                                    if c.get(key) is not None])
-            Rf, Rs = g("Rf"), g("Rs")
-            lo, hi = boot(cs, "d", args.boot, args.seed)
+            Rf, Rs = g("Rf"), serve_risk(cs)
+            lo, hi = boot(cs, "d_pop", args.boot, args.seed)
             # prod E[a_i] uses the EXACT marginal 1 - R_i, not the sampled abar:
             # the accept factor's mean is 1 - TV identically, and the TV side is
             # computed over the whole simplex rather than from the drawn tokens.

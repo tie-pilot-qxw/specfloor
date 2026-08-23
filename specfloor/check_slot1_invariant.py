@@ -86,8 +86,13 @@ def main() -> None:
         prefix = torch.tensor([full[:cut]], device=device, dtype=torch.long)
         gen = torch.Generator(device=device)
         gen.manual_seed(anchor_seed(a["prompt_id"], a["t"], C.SEED) % (2 ** 63 - 1))
-        slots, conds, chunk = rollout(tgt, prefix, args.paths, K, policy, stops, gen,
-                                      int(args.kv_budget_gib * (1 << 30)))
+        # rollout returns (parts, conds, reals, idxs, chunk). This unpacked
+        # three and raised ValueError on every invocation, so the one
+        # independent check on slot indexing and batched arithmetic had never
+        # actually run. It runs now, and CI should keep it running.
+        slots, conds, _reals, _idxs, chunk = rollout(
+            tgt, prefix, args.paths, K, policy, stops, gen,
+            int(args.kv_budget_gib * (1 << 30)))
 
         P0 = slots[0]
         P1, z0 = slots[1], conds[1]
