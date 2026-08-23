@@ -105,6 +105,11 @@ def main():
               for g in [(grp[k].get("T1") or {}).get("6", {}).get("split")]
               if s is not None and g is not None]
     check("slot 6  paired, held-out vs held-out", 0.0203, wmean(paired))
+    #   the pre-registered resolution test: four times the paths, same anchors,
+    #   corpora and seeds. rpre_o1_m1024/PREDICTION.md was written before it ran.
+    o1k = load("rpre_o1_m1024/*.rpre1.jsonl.gz")
+    check("slot 6  grouping M=1024 fit-and-score", 0.0352, cond(o1k, "plug", 6))
+    check("slot 6  grouping M=1024 held-out", 0.0393, cond(o1k, "split", 6))
     print(f"  -- grouping larger on {sum(1 for v, _ in paired if v > 0)}"
           f"/{len(paired)} anchors")
 
