@@ -78,51 +78,38 @@ def main():
     rp = load("rpre/*.rpre.jsonl.gz")
     check("T^(0) at slot 6", 0.2861, cell(rp, "T", 6))
 
-    print("Sec 4  one realised token")
-    t1 = load("t1/*.t01.jsonl.gz")
-    for slot, paper in ((2, 0.0040), (5, 0.0217)):
-        check(f"T^(1) at slot {slot}", paper, cell(t1, "T", slot, "1"))
-
-    print("App    the two T^(1) estimators, same 384 anchors (app:t1gap)")
+    print("Sec 4  one realised token, partitioning route, paired on one rollout set")
     o1 = load("rpre_o1/*.rpre1.jsonl.gz")
-    grp = {(r["prompt_id"], r["t"]): r for r in o1}
-    #   slot 1 is T^(1) = 0 by identity. SNIS returns it exactly -- its free
-    #   segment is empty there, so all M sequences coincide and the family it
-    #   minimises over is a point mass. Grouping does not: it compares paths
-    #   that shared a batched bf16 decode, which is the 1e-3 arithmetic floor.
+
     def cond(recs, key, slot):
         vals = [((r.get("T1") or {}).get(str(slot), {}).get(key), w(r))
                 for r in recs]
         return wmean([(v, x) for v, x in vals if v is not None])
-    for slot, a_fit, b_fit in ((1, 0.0000, 0.0009), (6, 0.0185, 0.0327)):
-        check(f"slot {slot}  SNIS fit-and-score", a_fit, cell(t1, "T", slot, "1"))
-        check(f"slot {slot}  grouping fit-and-score", b_fit, cond(o1, "plug", slot))
-    check("slot 6  grouping held-out", 0.0413, cond(o1, "split", 6))
-    paired = [(g - s, w(grp[k])) for k, r in ((k, r) for k, r in
-              ((( r["prompt_id"], r["t"]), r) for r in t1))
-              if k in grp
-              for s in [(r.get("T_split") or {}).get("1", {}).get("6")]
-              for g in [(grp[k].get("T1") or {}).get("6", {}).get("split")]
-              if s is not None and g is not None]
-    check("slot 6  paired, held-out vs held-out", 0.0203, wmean(paired))
-    #   the pre-registered resolution test: four times the paths, same anchors,
-    #   corpora and seeds. rpre_o1_m1024/PREDICTION.md was written before it ran.
-    o1k = load("rpre_o1_m1024/*.rpre1.jsonl.gz")
-    check("slot 6  grouping M=1024 fit-and-score", 0.0352, cond(o1k, "plug", 6))
-    check("slot 6  grouping M=1024 held-out", 0.0393, cond(o1k, "split", 6))
-    #   the same test on the other estimator. Neither column is unbiased -- one
-    #   is the winner's curse, the other a half-sample fit -- so an estimator
-    #   carrying only those two has a STABLE MIDPOINT as M grows, and its
-    #   fit-and-score must rise. Grouping does both; SNIS does neither.
-    a256 = load("t1/*.t01.m256.jsonl.gz")
-    check("slot 6  SNIS M=256 fit-and-score", 0.0192, cell(a256, "T", 6, "1"))
-    check("slot 6  SNIS M=256 held-out", 0.0258, cell(a256, "T_split", 6, "1"))
-    for name, lo, hi in (("SNIS", (0.0192 + 0.0258) / 2, (0.0185 + 0.0210) / 2),
-                         ("grouping", (0.0327 + 0.0413) / 2, (0.0352 + 0.0393) / 2)):
-        print(f"  -- {name:8s} midpoint  M=256 {lo:.4f} -> M=1024 {hi:.4f}"
-              f"   shift {hi - lo:+.4f}")
-    print(f"  -- grouping larger on {sum(1 for v, _ in paired if v > 0)}"
-          f"/{len(paired)} anchors")
+
+    for slot, t0, t1 in ((1, 0.0776, 0.0010), (3, 0.1727, 0.0210),
+                         (6, 0.2864, 0.0413)):
+        check(f"T^(0) at slot {slot}", t0, cell(o1, "T", slot))
+        check(f"T^(1) at slot {slot} (held-out)", t1, cond(o1, "split", slot))
+
+    print("App    T^(0) alignment: two implementations, no shared estimator code")
+    #   probe_tk reaches slot k by teacher-forced rescoring and has to pick the
+    #   right row; probe_rpre reads p from the forward that samples the token
+    #   and picks none. T^(0) steps 0.034-0.078 between adjacent slots, so a
+    #   one-slot misalignment would show up at that size. It does not.
+    tk = load("t0_s6/*.t0.jsonl.gz")
+    rp = load("rpre/*.rpre.jsonl.gz")
+    worst, prev = 0.0, None
+    for slot in range(7):
+        a_, b_ = cell(tk, "T", slot, "0"), cell(rp, "T", slot)
+        if b_ != b_:
+            continue
+        if prev is not None and abs(b_ - prev) > 0:
+            worst = max(worst, abs(a_ - b_) / abs(b_ - prev))
+        prev = b_
+    ok = worst < 0.25
+    CHECKS.append(ok)
+    print(f"  {'ok ' if ok else '!! '}{'worst gap as a share of the slot step':<52s}"
+          f" limit    <25%   archive {worst:>7.1%}")
 
     print("Sec 5  DFlash against its own floor, four domains")
     check("R at slot 6", 0.6359, cell(rp, "R", 6))

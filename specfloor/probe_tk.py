@@ -393,8 +393,21 @@ def main() -> None:
                 _t = time.perf_counter()
                 sq, starts, tags = [], [], []
                 for k in range(m, K):
+                    if k >= len(gt):
+                        continue          # no token to hang slot k's row on
                     for p in drawn:
-                        sq.append(list(prefix) + list(p[: k - m]) + list(gt[k - m: k]))
+                        # The trailing gt[k] is NOT scored as part of the weight
+                        # and its identity does not enter any estimate. It is
+                        # there to create the ROW that predicts slot k. The
+                        # backend returns one row per token of the sequence and
+                        # row i is the distribution that predicted token i, so
+                        # without a token at position len(prefix)+k the last row
+                        # is the one that predicted the last REVEALED token --
+                        # p(.|X, s), the distribution the weight was read from,
+                        # not p(.|X, s, z*). See probe_rm.ce_mixed_all, which
+                        # has always built the sequence this way.
+                        sq.append(list(prefix) + list(p[: k - m])
+                                  + list(gt[k - m: k]) + [gt[k]])
                         starts.append(len(prefix) + (k - m))
                         tags.append(k)
                 _t = _tick(PROF, "build_seqs", _t)
@@ -437,6 +450,9 @@ def main() -> None:
                     d, r = _dist(tp[-1], args.top_k)
                     if not d:
                         continue
+                    # v[:m] are the m revealed tokens under THIS sampled
+                    # prefix, so their sum is log w(s); v[m] is the trailing
+                    # gt[k] and is deliberately unused.
                     b = by.setdefault(k, ([], [], []))
                     b[0].append(d); b[1].append(-sum(v[:m])); b[2].append(r)
                 _t = _tick(PROF, "parse_topk", _t)

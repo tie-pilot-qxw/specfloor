@@ -337,11 +337,18 @@ class TargetEngine:
         the forced tokens (to build the importance weight) and the full
         next-token distribution at the last scored position (to build the
         barycentre). Issued separately those are two round trips over identical
-        input, and at order 1 they are two round trips over the identical
-        POSITION -- start_len is len(prefix)+k-1 and the distribution wanted is
-        at len(seq)-1, which is the same index. Measured on the live probe, the
-        two calls were 84% of wall clock with the accelerator reading 0%: the
-        cost is round trips and logprob transfer, not arithmetic.
+        input. Measured on the live probe, the two calls were 84% of wall clock
+        with the accelerator reading 0%: the cost is round trips and logprob
+        transfer, not arithmetic.
+
+        THE TWO ARE AT DIFFERENT POSITIONS AND THE CALLER MUST NOT ASSUME
+        OTHERWISE. Row i of `tops` is the distribution that PREDICTED token i,
+        computed from seq[:i]; `tops[-1]` therefore predicts the last token of
+        the sequence and conditions on everything before it. To read the
+        distribution AFTER a revealed suffix, the caller must put one more token
+        on the sequence -- any token, since only the row it creates is used. An
+        earlier version of probe_tk did not, and its m>=1 numbers were the
+        weighted spread of p(.|X, s) rather than the floor of p(.|X, s, z*).
 
         sglang populates input_token_logprobs and input_top_logprobs from the
         same forward, so asking for both costs one extra field on the response
