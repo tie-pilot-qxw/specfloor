@@ -36,7 +36,7 @@ zcat measurements/t0_s6/gsm8k.t0.jsonl.gz | head -1 | python -m json.tool
 | `br/` | `probe_br` | the per-path scalars the water fill and the swept fixed point run on. The largest thing here, and the one that cannot be regenerated without a GPU | §7 |
 | `rm_snis/`, `rm_m512/` | `probe_rm` | the log-loss companion `ρ_m` at `M=64` and `M=512` | §4 |
 | `api_v4/` | `probe_api_floor` | DeepSeek-V4-Pro through its API: prompts, per-slot floors, both cohorts | §6 |
-| `scale/` | full pipeline | Qwen3-8B, Qwen3-14B and Gemma-4-12B (`gemma12b_fix/`), each with its own corpus under `C0/` | §6 |
+| `scale/` | full pipeline | Qwen3-8B, Qwen3-14B (arena-hard from `qwen14b_arena/`) and Gemma-4-12B (`gemma12b_fix/`), each with its own corpus under `C0/` | §6 |
 
 `scale/_smoke/` and the `SMOKE`/`PILOT` files are three-anchor dry runs kept
 because the run scripts reference them; they are not in any table.

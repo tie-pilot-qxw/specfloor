@@ -139,9 +139,11 @@ def main():
     print("Sec 6  three larger targets, slot 6")
     for tag, name, paper_t, paper_r in (
             ("qwen8b", "Qwen3-8B", 0.3831, 0.6734),
-            ("qwen14b", "Qwen3-14B", 0.3411, 0.6341),
+            ("qwen14b", "Qwen3-14B", 0.3531, 0.6555),
             ("gemma12b_fix", "Gemma-4-12B", 0.2423, 0.6764)):
         rr = load(f"scale/{tag}/*.srv0.jsonl.gz")
+        if tag == "qwen14b":       # arena-hard lives in its own regenerated run
+            rr += load("scale/qwen14b_arena/*.srv0.jsonl.gz")
         check(f"{name} T^(0)", paper_t, cell(rr, "T", 6))
         check(f"{name} R", paper_r, cell(rr, "R", 6))
 

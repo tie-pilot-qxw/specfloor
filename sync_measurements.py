@@ -30,7 +30,8 @@ SKIP_DIRS = {"__pycache__", ".git", ".ipynb_checkpoints"}
 # Runs the archive does not carry, because a later run covers the same anchors
 # under the same configuration and the archive should hold one answer per
 # question, not a history of them.
-SKIP_PATHS = ("t1/", "scale/gemma12b/")
+SKIP_PATHS = ("t1/", "scale/gemma12b/", "scale/qwen14b/arena8k.",
+              "scale/qwen14b/C0/arena8k.")
 
 # probe_tk's m>=1 columns are carried only by t1_fix/. Elsewhere the probe was
 # run with --rungs 0,1 for the order-0 column alone, and the order-1 fields
