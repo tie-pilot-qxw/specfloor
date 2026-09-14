@@ -44,6 +44,9 @@ _NAMES = {
     "create_dspark_attention_mask": "deepspec.modeling.dspark.common",
     "create_position_ids": "deepspec.modeling.dspark.common",
     "extract_context_feature": "deepspec.modeling.dspark.common",
+    # An ATTENTION markov head carries a prefix K/V cache instead of a lookup table,
+    # so probe_rpre has to construct and reshape one; see head_context there.
+    "AttnHeadContext": "deepspec.modeling.dspark.attn_head",
 }
 
 

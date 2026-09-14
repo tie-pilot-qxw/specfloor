@@ -275,7 +275,10 @@ def main() -> None:
                             use_cache=False, logits_to_keep=1)
                 thid = _deepspec.extract_context_feature(th.hidden_states, taps).to(torch.bfloat16)
                 del th
-                dl = drafter_logits(draft, dcfg, thid, prefix, K, device)
+                # drafter_logits now also returns the drafter's block hidden states
+                # (an attention markov head needs them); this probe's head does not
+                # read them and its numbers are unchanged.
+                dl, _dhid = drafter_logits(draft, dcfg, thid, prefix, K, device)
                 del thid
                 base_or_q = warp(dl, policy) if args.order == 0 else dl
 

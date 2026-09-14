@@ -263,11 +263,68 @@ def drafter_logits(draft, dcfg, target_hidden, prefix_ids, K, device):
                                         seq_len=S, block_size=K, device=device)
     h = draft._forward_backbone(position_ids=pos, noise_embedding=emb,
                                 target_hidden_states=target_hidden, attention_mask=mask)
-    return draft.compute_logits(h)[0].float()
+    # h [1, K, H] comes back with the logits because an ATTENTION head needs it: its bias
+    # is a function of (previous token, THIS SLOT'S drafter hidden, committed prefix), not
+    # of the previous token alone. A table head ignores it and its numbers are unchanged.
+    return draft.compute_logits(h)[0].float(), h
+
+
+def head_context(draft, target_hidden, prefix_ids, K):
+    """The prefix K/V an attention markov head attends over, or None for a table head.
+
+    WHY THIS EXISTS.  `chain_logits` passes `hidden_states=None` and no context, which is
+    exact for the official vanilla head -- `compute_step_bias` discards both.  An AttnHead
+    asserts on either being absent, deliberately: a head that silently read zeros instead
+    of the committed prefix would not fail, it would score as a worse model, and the probe
+    would report that as a model gap.  So the probe feeds it what training feeds it, or it
+    does not run.
+
+    Two simplifications hold HERE and are ASSERTED, not assumed:
+      * one block, so there is nothing for a mask to separate.  The drafter's rule is
+        `kv_idx < anchor_pos` with no window, so slicing the context to `[:anchor_pos]`
+        and passing `context_mask=None` is the same visibility rather than an
+        approximation -- `tests/test_attn_context.py` checks that numerically.
+      * no per-block anchor K/V column (`markov_anchor_kv=False`).  With the column built,
+        the mask would need the block-identity strip that `context_mask=None` cannot
+        express.
+    The fusion is recomputed exactly as the model's own forward does it,
+    `hidden_norm(fc(.))`, for the reason stated there: the head must read what the
+    drafter's own layers read, not a second summary that can drift from it.
+    """
+    head = getattr(draft, "markov_head", None)
+    if head is None or getattr(head, "markov_head_type", "") != "attn":
+        return None
+    assert not head.use_anchor_kv, (
+        "this drafter builds a per-block anchor K/V column; the single-block context "
+        "below passes context_mask=None, which cannot express the anchor strip")
+    assert getattr(draft, "context_window", None) is None, (
+        f"context_window={draft.context_window} restricts the head's view; the slice "
+        f"below implements the unwindowed rule only")
+    anchor_pos = int(prefix_ids.shape[1]) - 1
+    fused = draft.hidden_norm(draft.fc(target_hidden))[:, :anchor_pos]
+    return head.build_context(
+        target_hidden=fused,
+        anchor_token_ids=prefix_ids[:, anchor_pos:anchor_pos + 1],
+        context_mask=None, block_size=K)
+
+
+def expand_context(ctx, b):
+    """Same prefix, b query rows.  `expand` shares storage, so this costs nothing."""
+    if ctx is None:
+        return None
+    assert ctx.anchor_key is None and ctx.context_mask is None, (
+        "expanding a context that carries an anchor column or a mask would have to "
+        "expand those too; head_context builds neither")
+    return _deepspec.AttnHeadContext(
+        key_states=ctx.key_states.expand(b, *ctx.key_states.shape[1:]),
+        value_states=ctx.value_states.expand(b, *ctx.value_states.shape[1:]),
+        anchor_key=None, anchor_value=None,
+        context_mask=None, num_blocks=ctx.num_blocks,
+    )
 
 
 @torch.no_grad()
-def chain_logits(draft, base_logits, k, prev_ids):
+def chain_logits(draft, base_logits, k, prev_ids, dhid=None, ctx=None):
     r"""An order-1 head's slot-k logits, one row per conditioning token.
 
     The markov head is an additive bias on the SAME realisation-blind base
@@ -293,12 +350,19 @@ def chain_logits(draft, base_logits, k, prev_ids):
     """
     B = prev_ids.shape[0]
     base = base_logits[k].unsqueeze(0).expand(B, -1)
+    if ctx is None:
+        return draft.markov_head.apply_step_logits(
+            base, token_ids=prev_ids.long(), hidden_states=None).float()
+    # Only the conditioning token varies across the B rows: this slot's drafter hidden
+    # and the prefix are properties of the anchor, so both are broadcast.
     return draft.markov_head.apply_step_logits(
-        base, token_ids=prev_ids.long(), hidden_states=None).float()
+        base, token_ids=prev_ids.long(),
+        hidden_states=dhid[0, k].unsqueeze(0).expand(B, -1),
+        context=expand_context(ctx, B)).float()
 
 
 @torch.no_grad()
-def chain_rollout(draft, base_logits, K, M, policy, gen, anchor_tok):
+def chain_rollout(draft, base_logits, K, M, policy, gen, anchor_tok, dhid=None, ctx=None):
     """M free samples of the drafter's OWN chain. Returns [M, K] token ids.
 
     This is the block DSpark would actually emit if nothing were verified:
@@ -309,7 +373,7 @@ def chain_rollout(draft, base_logits, K, M, policy, gen, anchor_tok):
     prev = torch.full((M,), int(anchor_tok), device=base_logits.device, dtype=torch.long)
     toks = torch.empty((M, K), device=base_logits.device, dtype=torch.long)
     for k in range(K):
-        q = warp(chain_logits(draft, base_logits, k, prev), policy)
+        q = warp(chain_logits(draft, base_logits, k, prev, dhid, ctx), policy)
         prev = torch.multinomial(q, 1, generator=gen)[:, 0]
         toks[:, k] = prev
         del q
@@ -558,7 +622,8 @@ def main() -> None:
                             use_cache=False, logits_to_keep=1)
                 thid = _deepspec.extract_context_feature(th.hidden_states, taps).to(torch.bfloat16)
                 del th
-                dl = drafter_logits(draft, dcfg, thid, prefix, K, device)
+                dl, dhid = drafter_logits(draft, dcfg, thid, prefix, K, device)
+                hctx = head_context(draft, thid, prefix, K)
                 del thid
 
                 seed = anchor_seed(a["prompt_id"], a["t"], C.SEED) % (2 ** 63 - 1)
@@ -580,7 +645,7 @@ def main() -> None:
                         gc = torch.Generator(device=device)
                         gc.manual_seed((seed ^ 0x5EED_C4A1) % (2 ** 63 - 1))
                         chain = chain_rollout(draft, base, K, args.paths, policy,
-                                              gc, full[cut - 1])
+                                              gc, full[cut - 1], dhid, hctx)
 
                 slots, conds, reals, idxs, chunk = rollout(
                     target, prefix, args.paths, K, policy, stop_ids, gen,
@@ -624,12 +689,12 @@ def main() -> None:
                 else:
                     zc = conds[k]
                     row["T1"][str(k)] = cond_floor(P, zc)
-                    Q_orc = warp(chain_logits(draft, base, k, zc), policy)
+                    Q_orc = warp(chain_logits(draft, base, k, zc, dhid, hctx), policy)
                     row["R"][str(k)] = mean_tv_rows(P, Q_orc)
                     if chain is not None:
                         na = P.shape[0]
                         ps = (zc if k == 0 else chain[:na, k - 1])
-                        Q = warp(chain_logits(draft, base, k, ps), policy)
+                        Q = warp(chain_logits(draft, base, k, ps, dhid, hctx), policy)
                         row["R_self"][str(k)] = mean_tv_rows(P, Q)
                         del Q
                 # ---- serving reweighting. q_k is whatever this drafter actually
@@ -655,7 +720,7 @@ def main() -> None:
             fout.write(json.dumps(row) + "\n")
             fout.flush()
             n += 1
-            del slots, conds, reals, idxs, q_warp, q_temp, base, chain
+            del slots, conds, reals, idxs, q_warp, q_temp, base, chain, dhid, hctx
             if n % 8 == 0:
                 torch.cuda.empty_cache()
                 print(f"   {n}/{len(anchors)}  last T5={row['T'].get('5')} "
