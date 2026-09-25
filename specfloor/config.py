@@ -11,7 +11,15 @@ by construction.
 from __future__ import annotations
 
 # ---------------------------------------------------------------- contract --
-GAMMA = 7                       # block size; the released checkpoint's gamma
+# Block length: the number of draft slots 0..GAMMA-1 a floor is measured over,
+# the paper's gamma. 7 matches the released block-7 checkpoints. It is
+# overridable only through the environment, so a run records the value it used
+# and the default reproduces the paper's gamma=7 numbers unchanged. The floor
+# probes need nothing else to run at another length; probes that load a drafter
+# assert the drafter's block size against it.
+import os as _os
+
+GAMMA = int(_os.environ.get("SPECFLOOR_GAMMA", "7"))
 TARGET = "Qwen/Qwen3-4B"
 
 DOMAINS = ("gsm8k", "mbpp", "alpaca", "arena-hard-v2")
