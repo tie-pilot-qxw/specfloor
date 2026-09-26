@@ -1,0 +1,26 @@
+specfloor
+Copyright (c) 2026 The specfloor authors
+
+Parts of this repository are derived from or modify third-party projects.
+
+drafter/overlay/
+  Modifies DeepSpec (https://github.com/deepseek-ai/DeepSpec, MIT License,
+  Copyright (c) 2026 The DeepSpec Authors). Some of its files adapt code from
+  SpecForge (https://github.com/sgl-project/SpecForge, Apache License 2.0) and
+  carry a notice where they were modified. See drafter/LICENSE and
+  drafter/NOTICE.
+
+serving/sglang/
+  A patch to SGLang (https://github.com/sgl-project/sglang, Apache License 2.0).
+  Every file it changes carries a modification notice; see
+  serving/sglang/README.md.
+
+serving/results/serving_sweep_20260922/sources/
+  Byte-for-byte snapshots of the files that ran, kept as provenance. Five are
+  SGLang files (Apache License 2.0): three unmodified, two as modified by the
+  patch above.
+
+Models and data used by the experiments (Qwen3, Gemma 4, DeepSeek, the released
+DFlash and DSpark checkpoints, Open PerfectBlend and the evaluation benchmarks)
+are not redistributed here, except for derived records and prompts needed to
+check the reported numbers, and remain subject to their own licenses and terms.

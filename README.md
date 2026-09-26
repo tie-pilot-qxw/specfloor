@@ -1,6 +1,68 @@
 # specfloor
 
-Information floors and model gaps for block speculative decoding.
+Code, data and checks for *Beyond Parallel Blindness: Information Floors and
+Model Gaps in Block Drafting*.
+
+A block drafter proposes several tokens in one forward pass, before the earlier
+target tokens are realised. Its rejection mixes two losses: path information it
+cannot see, and imperfect use of the information it can. The **information
+floor** `T^(m)` is the least rejection any proposal can reach when it sees only
+the last `m` realised tokens; rejection above it is the **model gap**. This
+repository measures both, and holds the prefix-attention drafter the paper
+builds from the diagnosis.
+
+| Directory | Contents | Paper |
+|---|---|---|
+| [`specfloor/`](specfloor/) | The measurement package: floor and drafter-risk probes, and the reports that turn records into tables | Secs. 2–5, appendices |
+| [`measurements/`](measurements/) | Every measurement record behind the paper (32 MB gzipped), its manifest, and `verify.py` | Secs. 3–6, appendices |
+| [`paper/`](paper/) | The measurement figures, drawn from `measurements/` | Every data figure (Fig. 1 is a diagram) |
+| [`drafter/`](drafter/) | Training code for the prefix-attention drafter, as an overlay on upstream DeepSpec, with an equivalence check against the code that trained it | Sec. 6, App. *Prefix-attention drafter* |
+| [`serving/`](serving/) | The SGLang patch that serves the drafter, the serving collectors, and every serving record behind the paper | Sec. 6, App. *Prefix-attention drafter* |
+
+## Checking the paper's numbers
+
+None of this needs a GPU or a model:
+
+```bash
+pip install -e '.[paper]'
+python -m specfloor.test_estimators        # estimator identities against closed forms
+python -m measurements.verify --fast       # every number read off measurements/ (drop --fast for the best responses, ~10 min)
+python -m paper.figures                    # the measurement figures, into paper/figures/
+cd serving/results
+python summarize_serving_sweep.py          # serving tables: accepted length, speedup, concurrency sweep
+python summarize_accept_evals.py           # training trajectory and one-epoch components
+```
+
+`verify` recomputes each value through the report that produces it and prints it
+beside the value the paper prints, at the paper's precision.
+
+## Where each result comes from
+
+| Paper | Records | Code |
+|---|---|---|
+| Sec. 3.1: order-0 floor, per domain, concentration | `measurements/rpre/`, `t0_s6/` | `rpre_report`, `concentration_report` |
+| Sec. 3.2: order-1 floor | `measurements/rpre_o1/`, `t1_fix/` | `rpre_report --order 1`, `tk_report` |
+| Sec. 3.2: mutual-information recovery | `measurements/rm_m512/`, `rm_snis/` | `mi_report` |
+| Sec. 3.3: DFlash and DSpark decompositions | `measurements/rpre/`, `rpre_o1/` | `rpre_report`, `ratio_report` |
+| Sec. 4: Qwen3-8B, Qwen3-14B, Gemma-4-12B; DeepSeek-V4-Pro API | `measurements/scale/`, `api_v4/` | `ratio_report`, `api_floor_report` |
+| Sec. 5: serving-weighted risk, single-slot oracle, sweeps | `measurements/srv/`, `br/` | `srv_report`, `br_report`, `br_iter` |
+| Sec. 6: per-slot gap of the new drafter | `measurements/rpre_o1_ours/` | `rpre_compare` |
+| Sec. 6: accepted length, speedup, trajectory, components | `serving/results/` | `serving/results/summarize_*.py` |
+| App. robustness: replication, path count, truncation, sampling law, block length 16 | `measurements/t1_fix/`, `tk/`, `tk20/`, `rpre_c1/`, `g16/` | `tk_report`, `topk_compare`, `blocklen_report` |
+| App. K-median | `measurements/branch/` | `kmedian_report` |
+
+Producing new measurements needs GPUs; see [`RUNBOOK.md`](RUNBOOK.md) for the
+measurement pipeline, [`drafter/README.md`](drafter/README.md) for training and
+[`serving/README.md`](serving/README.md) for serving.
+
+## License
+
+The code in this repository is released under the MIT License ([`LICENSE`](LICENSE)).
+`drafter/overlay/` modifies upstream DeepSpec (MIT) and includes files adapted from
+SpecForge (Apache-2.0); `serving/sglang/` is a patch to SGLang (Apache-2.0). See
+[`NOTICE`](NOTICE) for the third-party terms that apply.
+
+# The measurement package
 
 A block drafter proposes γ tokens from a single forward pass, so every slot must
 commit to a distribution before the target's realisations at earlier slots exist.
