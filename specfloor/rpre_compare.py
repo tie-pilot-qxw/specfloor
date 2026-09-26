@@ -76,6 +76,33 @@ def boot_diff(rows, col, B, seed):
     return point, draws[int(0.025 * B)], draws[int(0.975 * B)]
 
 
+def decomposition(a, b, K=None):
+    """Per slot, both arms: the paired Hajek means of eq. (3)'s terms.
+
+    {slot: {metric: (a, b)}} for floor T^(1), oracle risk, model gap G^(1),
+    exposure and self-conditioned risk. Slot 0 has no predecessor to reveal, so
+    its population floor is exactly zero and the gap there is the whole oracle
+    risk; the estimator returns ~1e-8 at that slot, and it is zeroed rather than
+    left to leak into the gap. These are the values behind the solution figure
+    and its table.
+    """
+    if K is None:
+        K = 1 + max(int(s) for r in next(iter(a.values())) for s in (r.get("R") or {}))
+    out = {}
+    for k in range(K):
+        rows = paired(a, b, k)
+        res = {}
+        for c in (0, 1):
+            w = [row[1 + c]["w"] for row in rows]
+            get = lambda key: wmean([(row[1 + c][key], wt) for row, wt in zip(rows, w)])
+            floor = 0.0 if k == 0 else get("T1s")
+            orac, self_ = get("Rorc"), get("Rself")
+            res[c] = dict(floor=floor, oracle_risk=orac, model_gap=orac - floor,
+                          exposure=self_ - orac, self_risk=self_)
+        out[k] = {m: (res[0][m], res[1][m]) for m in res[0]}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--a", required=True, help="baseline glob")

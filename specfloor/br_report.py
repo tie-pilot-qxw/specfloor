@@ -17,7 +17,7 @@ So every number here is **cross-fitted**. Each anchor's paths are split in half 
 proposal is water-filled on one half and $\tau$ is evaluated on the other; the halves are swapped and
 the two folds averaged. `dtau_train` is printed beside `dtau_held` and their difference is a result
 in its own right -- it prices how hard this policy is to estimate, exactly as `curse` does for the
-floor in §5.3.
+floor in tk_report.
 
 **Where unallocated mass goes.** Water filling stops when every path in the cell is saturated, which
 can happen with mass to spare: $\lambda = 1 - \sum_v q^\star(v) > 0$. That leftover is worth nothing
@@ -51,7 +51,7 @@ problem and it is assumed away here.
 
 This is not a defect peculiar to this measurement -- it is exactly the convention of $T^{(m)}$, whose
 minimisation also sits inside the outer expectation and so also grants a separate optimum per prefix
-(paper §3.1, §3.5). Both quantities live in the same oracle class: **any measurable map from the
+(paper Sec. 2, and App. "Architectural interpretation of the model gap"). Both quantities live in the same oracle class: **any measurable map from the
 permitted information to the simplex**. What is forbidden is only the realisation that has not
 happened yet.
 
@@ -79,6 +79,8 @@ import json
 import math
 import os
 import random
+
+from specfloor.records import open_text
 
 
 # ------------------------------------------------------------------ paths ----
@@ -250,7 +252,7 @@ def load(pattern):
     by = {}
     for f in sorted(glob.glob(pattern)):
         dom = os.path.basename(f).split(".")[0]
-        for line in open(f):
+        for line in open_text(f):
             line = line.strip()
             if line:
                 by.setdefault(dom, []).append(json.loads(line))
