@@ -1,0 +1,47 @@
+{
+ "config": "attnconv_qwen3_4b_b7_10ep",
+ "orig": {
+  "tensors": 120,
+  "sha256": "5171fb29e53fb556d14d3b94ddd7513899b68e03bd1a2eeaf4e61aa67f4d2e0a",
+  "loss": [
+   4.501242160797119
+  ],
+  "grad_norm": [
+   186.0
+  ],
+  "lr": [
+   0.0
+  ]
+ },
+ "overlay": {
+  "tensors": 120,
+  "sha256": "5171fb29e53fb556d14d3b94ddd7513899b68e03bd1a2eeaf4e61aa67f4d2e0a",
+  "loss": [
+   4.501242160797119
+  ],
+  "grad_norm": [
+   186.0
+  ],
+  "lr": [
+   0.0
+  ]
+ },
+ "different_tensors": [],
+ "only_overlay_tensors": [],
+ "bit_identical_weights": true,
+ "scalars_compared": 144,
+ "scalars_different": [],
+ "scalars_only_orig": [],
+ "scalars_only_overlay": [],
+ "tensors_changed_by_the_step": 89,
+ "frozen_tensors_changed": [],
+ "overrides": {
+  "rows": 2,
+  "global_batch_size": 2,
+  "micro_batches": 2,
+  "num_anchors": 64,
+  "max_length": 1024,
+  "max_train_steps": 1,
+  "lr_schedule_steps": 1
+ }
+}
