@@ -246,7 +246,7 @@ def drafter_gaps():
     T = ("0.00", "0.08", "0.12", "0.17", "0.21", "0.25", "0.29")
     R = ("0.14", "0.24", "0.35", "0.43", "0.50", "0.57", "0.64")
     G = ("0.14", "0.16", "0.23", "0.25", "0.29", "0.32", "0.35")
-    CI = ("[.094,.183]", "[.122,.203]", "[.177,.278]", "[.204,.307]", "[.242,.345]",
+    CI = ("[.094,.183]", "[.122,.203]", "[.176,.278]", "[.204,.307]", "[.242,.345]",
           "[.268,.378]", "[.300,.401]")
     GR = ("100", "67.3", "65.0", "59.5", "58.6", "56.8", "55.0")
     fig_T = ("0.0000", "0.0776", "0.1211", "0.1724", "0.2060", "0.2458", "0.2861")
@@ -260,9 +260,7 @@ def drafter_gaps():
         check(f"T^(0) slot {k}", T[k], t)
         check(f"R slot {k}", R[k], r)
         check(f"G^(0) slot {k}", G[k], g)
-        # the paper rounded 0.17648 via 0.1765 to .177
-        check_ci(f"G^(0) slot {k} CI", CI[k], lo, hi,
-                 erratum="[.176,.278]" if k == 2 else None)
+        check_ci(f"G^(0) slot {k} CI", CI[k], lo, hi)
         check(f"G^(0)/R slot {k}", GR[k], g / r, pct=True)
         check(f"Fig. stack DFlash T^(0) slot {k}", fig_T[k], t)
         check(f"Fig. stack DFlash R slot {k}", fig_R[k], r)
@@ -314,26 +312,20 @@ def scale():
     section("Sec. 4 / Fig. cross-target: final-slot decompositions (ratio_report)")
     fig = {"Qwen3-4B": ("0.286", "0.636", "0.041", "0.367"),
            "Qwen3-8B": ("0.383", "0.673", "0.060", "0.399"),
-           "Qwen3-14B": ("0.353", "0.656", "0.056", "0.412"),
+           "Qwen3-14B": ("0.353", "0.655", "0.056", "0.412"),
            "Gemma-4-12B": ("0.242", "0.676", "0.031", "0.397")}
-    ci = {"Qwen3-4B": ("[49.5,60.7]", "[49.4,60.5]"),
-          "Qwen3-8B": ("[36.2,50.4]", "[36.2,50.5]"),
-          # the paper's interval is from the superseded arena-hard run
-          "Qwen3-14B": ("[39.2,53.4]", "[38.6,53.8]"),
-          "Gemma-4-12B": ("[58.9,69.4]", "[59.2,69.5]")}
+    ci = {"Qwen3-4B": "[49.4,60.5]", "Qwen3-8B": "[36.2,50.5]",
+          "Qwen3-14B": "[38.6,53.8]", "Gemma-4-12B": "[59.2,69.5]"}
     gr, dr = [], []
     for name, (g0, g1) in RR.TARGETS.items():
         a = RR.dflash_share(RR.records(g0), 6)
         b = RR.dspark_share(RR.records(g1), 6)
         t0, r0, t1, r1 = fig[name]
         check(f"{name} DFlash T^(0)", t0, a["T"])
-        # the figure rounded Qwen3-14B's 0.65549 via 0.6555 to 0.656
-        check(f"{name} DFlash R", r0, a["R"], erratum="0.655" if name == "Qwen3-14B" else None)
+        check(f"{name} DFlash R", r0, a["R"])
         check(f"{name} DSpark T^(1)", t1, b["T1"])
         check(f"{name} DSpark R_oracle", r1, b["R"])
-        paper, now = ci[name]
-        check_ci(f"{name} G^(0)/R CI", paper, a["share"][1], a["share"][2], pct=True,
-                 erratum=None if paper == now else now)
+        check_ci(f"{name} G^(0)/R CI", ci[name], a["share"][1], a["share"][2], pct=True)
         check_true(f"{name} R_oracle exceeds T^(0)", "DSpark above the order-0 floor",
                    b["R"] > b["T0"])
         gr.append(a["share"][0])
@@ -387,19 +379,16 @@ def serving():
             ("0.24", "0.35", "0.43", "0.50", "0.57", "0.64"),
             ("0.17", "0.20", "0.17", "0.19", "0.22", "0.21"),
             ("-0.07", "-0.15", "-0.26", "-0.31", "-0.35", "-0.42"),
-            # the paper's DFlash intervals sit ~0.001 from srv_report's draws
-            (("[-.098,-.046]", "[-.098,-.047]"), ("[-.185,-.111]", "[-.185,-.112]"),
-             ("[-.311,-.211]", "[-.312,-.211]"), ("[-.365,-.253]", "[-.366,-.254]"),
-             ("[-.421,-.286]", "[-.421,-.287]"), ("[-.493,-.356]", "[-.494,-.357]")),
+            ("[-.098,-.047]", "[-.185,-.112]", "[-.312,-.211]", "[-.366,-.254]",
+             "[-.421,-.287]", "[-.494,-.357]"),
             ("1.000", "1.093", "1.337", "1.945", "3.133", "5.692", "12.33"),
             "4.574", "3.397"),
         "srv/*.srv1.jsonl.gz": ("DSpark",
             ("0.14", "0.21", "0.27", "0.29", "0.35", "0.37"),
             ("0.10", "0.15", "0.13", "0.14", "0.18", "0.16"),
             ("-0.03", "-0.05", "-0.13", "-0.15", "-0.17", "-0.21"),
-            (("[-.056,-.017]", None), ("[-.081,-.033]", None),
-             ("[-.172,-.095]", "[-.173,-.097]"), ("[-.194,-.101]", None),
-             ("[-.224,-.120]", None), ("[-.262,-.159]", None)),
+            ("[-.056,-.017]", "[-.081,-.033]", "[-.173,-.097]", "[-.194,-.101]",
+             "[-.224,-.120]", "[-.262,-.159]"),
             ("1.000", "1.039", "1.110", "1.310", "1.580", "1.986", "2.63"),
             "5.232", "4.386"),
     }
@@ -421,8 +410,7 @@ def serving():
             check(f"{name} R free slot {k}", Rf[k - 1], rf)
             check(f"{name} R serve slot {k}", Rs[k - 1], rs)
             check(f"{name} serve - free slot {k}", D[k - 1], rs - rf)
-            paper, now = CIs[k - 1]
-            check_ci(f"{name} serve - free slot {k} CI", paper, lo, hi, erratum=now)
+            check_ci(f"{name} serve - free slot {k} CI", CIs[k - 1], lo, hi)
         check(f"{name} tau from the joint survival", tau_joint, 1 + EJ_s)
         check(f"{name} tau from independent slots", tau_ind, 1 + EJ_p)
         if name == "DFlash":
@@ -578,16 +566,15 @@ def robustness():
         if k:
             diffs.append(abs(a_ - b_))
     check("smallest |difference|, slots 1-6", "7e-4", min(diffs))
-    check("largest |difference|, slots 1-6", "4.4e-3", max(diffs), erratum="3.4e-3")
+    check("largest |difference|, slots 1-6", "3.4e-3", max(diffs))
     for slot, paper in ((1, "0.0761"), (3, "0.1715"), (6, "0.2854")):
         check(f"top-256 M=1024 T^(0) slot {slot} (4 d.p.)", paper,
               hajek(t0, RR.nested("T", 0, slot)))
     check("full vocabulary minus top-256 at slot 6", "7e-4", diffs[-1])
     snis = load("t1_fix/*.t01.jsonl.gz")
     p, lo, hi, n = RR.route_difference(o1, snis, 6)
-    check("T^(1) routes paired at slot 6", "+3.2e-3", p, erratum="+3.1e-3")
-    check_ci("T^(1) routes paired at slot 6, CI (x1e-3)", "[-9.40,+14.30]", 1e3 * lo, 1e3 * hi,
-             erratum="[-8.56,+13.90]")
+    check("T^(1) routes paired at slot 6", "+3.1e-3", p)
+    check_ci("T^(1) routes paired at slot 6, CI (x1e-3)", "[-8.56,+13.90]", 1e3 * lo, 1e3 * hi)
     check("largest |paired route difference|, slots 1-6", "0.007",
           max(abs(hajek(o1, RR.route_gap(snis, k))) for k in range(1, 7)))
     check("T^(1) reweighting route slot 1 (0 by identity)", "0.0000",
@@ -609,30 +596,27 @@ def robustness():
     section("App. Finite-sample sensitivity: M=1024 vs M=256, same engine")
     tk = load("tk/*.t0.jsonl.gz")
     m256 = load("t1_fix/*.t01.m256.jsonl.gz")
-    # The printed table predates the reruns and is not what the archive gives.
-    t0row = (("1.40", "1.32"), ("0.90", "0.83"), ("2.20", "2.40"), ("2.20", "2.14"),
-             ("1.30", "1.21"))
-    t1row = (("0.00", None), ("0.30", "0.14"), ("0.40", "1.21"), ("0.70", "1.86"),
-             ("1.20", "0.11"), ("0.20", "0.08"))
+    t0row = ("1.32", "0.83", "2.40", "2.14", "1.21")
+    t1row = ("0.00", "0.14", "1.21", "1.86", "0.11", "0.08")
     moved = []
-    for k, (p_, e_) in enumerate(t0row, 1):
+    for k, p_ in enumerate(t0row, 1):
         v = 1e3 * abs(hajek(t0, RR.nested("T", 0, k)) - hajek(tk, RR.nested("T", 0, k)))
         moved.append(v)
-        check(f"|T^(0) M=1024 - M=256| slot {k} (x1e-3)", p_, v, erratum=e_)
-    for k, (p_, e_) in enumerate(t1row, 1):
+        check(f"|T^(0) M=1024 - M=256| slot {k} (x1e-3)", p_, v)
+    for k, p_ in enumerate(t1row, 1):
         v = 1e3 * abs(hajek(snis, RR.nested("T", 1, k)) - hajek(m256, RR.nested("T", 1, k)))
         moved.append(v)
-        check(f"|T^(1) M=1024 - M=256| slot {k} (x1e-3)", p_, v, erratum=e_)
-    check("largest move under 4x paths (x1e-3)", "2.2", max(moved), erratum="2.4")
+        check(f"|T^(1) M=1024 - M=256| slot {k} (x1e-3)", p_, v)
+    check("largest move under 4x paths (x1e-3)", "2.4", max(moved))
     check_true("order-0 M=256 run has no slot 6", "",
                all(RR.nested("T", 0, 6)(r) is None for r in tk))
     check("full vocabulary M=256 minus top-256 M=1024 at slot 6", "7e-4",
           abs(hajek(rp, RR.flat("T", 6)) - hajek(t0, RR.nested("T", 0, 6))))
     ess = [hajek(snis, RR.nested("ess", 1, k)) for k in range(2, 7)]
-    check("order-1 importance ESS at M=1024, low", "693", min(ess), erratum="688")
+    check("order-1 importance ESS at M=1024, low", "688", min(ess))
     check("order-1 importance ESS at M=1024, high", "924", max(ess))
     fs = lambda recs: hajek(recs, RR.nested("T_split", 1, 6)) - hajek(recs, RR.nested("T", 1, 6))
-    check("slot-6 fit-score difference at M=256", "+6.4e-3", fs(m256), erratum="+6.6e-3")
+    check("slot-6 fit-score difference at M=256", "+6.6e-3", fs(m256))
     check("slot-6 fit-score difference at M=1024", "+2e-3", fs(snis))
     doms = by_domain("tk/*.t0.jsonl.gz")
     split = lambda recs, k: (hajek(recs, RR.nested("T_split", 0, k))
@@ -685,23 +669,18 @@ def robustness():
     section("App. Headline uncertainty intervals: tab:floor-intervals (ratio_report)")
     T0 = ("[.055,.101]", "[.092,.149]", "[.136,.211]", "[.164,.246]", "[.202,.292]",
           "[.239,.334]")
-    T1 = (None, ("[2.90,7.20]", "[2.86,7.26]"), ("[0.01,0.03]", None), ("[0.02,0.04]", None),
-          ("[0.02,0.04]", None), ("[0.03,0.06]", None))
-    SH = (None, ("[94.5,97.4]", None), ("[82.3,93.0]", "[82.2,93.0]"),
-          ("[84.4,90.8]", "[84.3,90.7]"), ("[85.2,91.1]", "[85.4,91.1]"),
-          ("[80.6,89.8]", "[80.7,89.8]"))
+    T1 = (None, "[2.86,7.26]", "[0.01,0.03]", "[0.02,0.04]", "[0.02,0.04]", "[0.03,0.06]")
+    SH = (None, "[94.5,97.4]", "[82.2,93.0]", "[84.3,90.7]", "[85.4,91.1]", "[80.7,89.8]")
     for k in range(1, 7):
         f = RR.floor_intervals(t0, o1, k)
         check_ci(f"T^(0) top-256 slot {k}", T0[k - 1], f["T0"][1], f["T0"][2])
         if T1[k - 1]:
-            p_, e_ = T1[k - 1]
             s = 1e3 if k == 2 else 1
             check_ci(f"T^(1) partitioning slot {k}" + (" (x1e-3)" if k == 2 else ""),
-                     p_, s * f["T1"][1], s * f["T1"][2], erratum=e_)
+                     T1[k - 1], s * f["T1"][1], s * f["T1"][2])
         if SH[k - 1]:
-            p_, e_ = SH[k - 1]
-            check_ci(f"(T0 - T1)/T0 slot {k}", p_, f["share"][1], f["share"][2], pct=True,
-                     erratum=e_)
+            check_ci(f"(T0 - T1)/T0 slot {k}", SH[k - 1], f["share"][1], f["share"][2],
+                     pct=True)
 
 
 def blocklen():
