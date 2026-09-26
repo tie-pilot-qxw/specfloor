@@ -166,6 +166,26 @@ divides 512 gives the same 512 samples per step.  Checkpoints go to
 point first).  To end a long run early, relaunch with
 `--opts train.lr_cooldown_on_resume=True --opts train.max_train_steps=<N>`.
 
+### Training efficiency
+
+The final configuration turns on the following; all of them are in the overlay,
+computing exactly what the research code computed.
+
+| option | what it does |
+|---|---|
+| `train.fsdp_ignore_frozen=True` | Keeps the frozen target embedding and lm_head out of FSDP's flat parameter. FSDP otherwise flattens the whole model into one parameter that requires grad if any member does, so the frozen tables would take part in every gradient operation. Requires `sharding_strategy="no_shard"` (the paper's runs), under which ignored parameters are replicated anyway, so it costs no memory. |
+| `train.window_normalized_denominator=True` | Normalises the loss once per optimizer step instead of once per micro-batch: each micro-batch back-propagates its numerator, and at the step boundary the accumulated gradient is rescaled by the global token count of the whole step, one scalar all-reduce per step instead of two per micro-batch. Unlike the other options it also changes the objective slightly, since tokens are weighted over the whole step. |
+| `model.fused_target=True` | Fused teacher forward for the frozen target (needs `sgl_kernel`). |
+| `model.compile_l1=True`, `train.torch_compile=True` | Compiled full-vocabulary L1 loss and compiled model. |
+| `model.short_conv=True` | The short convolution runs as Triton kernels, forward and backward (`short_conv_kernel.py`). |
+
+On one shared H100, ten optimizer steps of the final configuration (8 micro-batches
+of one sequence, maximum length 2048, 512 anchors), alternating two runs of each
+tree, took 2.29 s per step for both the research tree and the release.  Step-1 loss
+was identical; step-10 loss differed in the fourth decimal (2.6064 against 2.6069)
+because each tree compiled its own kernels, and each reproduced its own value
+exactly.  With shared compiled kernels the two are bit-identical (below).
+
 Before serving a checkpoint with the SGLang runtime in `../serving/`:
 
 ```bash
@@ -231,15 +251,19 @@ The research tree also contained self-draft/LoRA and XG drafters, an EAGLE-chain
 variant, Qwen2 and Gemma-4 online trainers, other order-1 head types (conditional,
 multi-lag, window-mix, XPress), within-block attention lanes, horizon scaling,
 split cross/self attention, DFlash2-wiring convolutions, depth-credit, serving,
-KL-guard and fork-weighted objectives, profiling hooks, and many unused
-configurations.  None of them is used by the paper's configurations.
+KL-guard and fork-weighted objectives, profiling hooks, length-balanced
+batching, batching the target forward across micro-batches
+(`model.hidden_prefetch_chunk`), and many unused configurations.  None of them
+is used by the paper's configurations.
 
 The equivalence checks cover model construction, the forward/backward training
 step for every configuration, and one full optimizer step through `train.py` on
 one GPU.  They do not exercise multi-GPU reduction (the paper's runs used 4 GPUs),
 resuming from a checkpoint, or `lr_cooldown_on_resume`; that code is carried over
 from the research tree with only the LoRA-specific save option removed, and
-`tests/trainer/` covers its resume-state logic.
+`tests/trainer/` covers its resume-state logic.  The multi-GPU part of window
+normalisation, one all-reduce of the step's denominator, is the research code's
+unchanged apart from a removed debug print.
 
 ## License
 
