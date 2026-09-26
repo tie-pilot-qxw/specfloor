@@ -1,0 +1,9 @@
+[2026-09-22 07:13:02] Decode batch, #running-req: 1, #token: 676, token usage: 0.00, accept len: 1.68, accept rate: 0.10, cuda graph: True, gen throughput (token/s): 295.77, #queue-req: 0
+[2026-09-22 07:13:02] Endpoint '/get_server_info' is deprecated and will be removed in a future version. Please use '/server_info' instead.
+[2026-09-22 07:13:02] INFO:     127.0.0.1:34630 - "GET /get_server_info HTTP/1.1" 200 OK
+[2026-09-22 07:13:02] SIGTERM received. signum=None frame=None. Draining requests and shutting down...
+[2026-09-22 07:13:03] Subprocess scheduler_0 (pid=287899) crashed with exit code -15. Triggering SIGQUIT for cleanup...
+[2026-09-22 07:13:03] SIGQUIT received. signum=None, frame=None. It usually means one child failed.
+[2026-09-22 07:13:03] Sleeping 5 seconds before crash diagnostics to let GPU activity settle.
+[2026-09-22 07:13:08] No live scheduler processes found; skipping py-spy and CUDA coredump.
+[2026-09-22 07:13:08] kill_process_tree called: parent_pid=287703, include_parent=True, pid=287703

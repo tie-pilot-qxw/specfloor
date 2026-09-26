@@ -1,0 +1,10 @@
+{
+  "temperature": 1,
+  "concurrency": 1,
+  "macro_decode_speedup_over_ar": {
+    "official": 3.46278955852701,
+    "ours": 3.6608274594999974
+  },
+  "mean_task_decode_ours_over_official": 1.0573928699018464,
+  "metric": "Task sum(N-1 output tokens) / sum(scheduler prefill-finished to request completion time), then equal mean of nine task ratios; not GPU-only time."
+}

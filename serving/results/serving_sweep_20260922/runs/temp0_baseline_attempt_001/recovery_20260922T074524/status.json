@@ -1,0 +1,8 @@
+{
+  "arm": "baseline",
+  "gpu": 3,
+  "concurrency": 1,
+  "updated_unix": 1790069505.713096,
+  "recovery_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_gpu3_clean/attempt_001/recovery_20260922T074524",
+  "state": "complete"
+}

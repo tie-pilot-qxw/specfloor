@@ -1,0 +1,21 @@
+{
+  "started_unix": 1790063124.3736324,
+  "retained_tasks": [
+    "gsm8k"
+  ],
+  "remaining_tasks": [
+    "math500",
+    "aime25",
+    "humaneval",
+    "mbpp",
+    "livecodebench",
+    "mt-bench",
+    "alpaca",
+    "arena-hard-v2"
+  ],
+  "reason": "Original nvidia-smi 15s timeout",
+  "telemetry_timeout_s": 60,
+  "runner_sha256": "e76dcd43f6f049a5a3bed36afd528297ecc5512c3a97c7b81a0c171779e087b1",
+  "original_manifest": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_gpu3_clean/attempt_001/manifest.json",
+  "note": "C=1 resumes at whole-task boundaries; no elapsed timers span server restarts."
+}

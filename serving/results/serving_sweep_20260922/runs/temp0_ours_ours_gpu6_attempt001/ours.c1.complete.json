@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "rows": 3030,
+  "completed_unix": 1790065213.0488312,
+  "concurrency": 1,
+  "arm": "ours",
+  "recovery_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_parallel/ours_gpu6_attempt001/recovery_20260922T074837"
+}

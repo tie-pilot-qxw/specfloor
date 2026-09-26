@@ -1,0 +1,6 @@
+[2026-09-22 21:32:25] Decode batch, #running-req: 1, #token: 2057, token usage: 0.00, cuda graph: True, gen throughput (token/s): 232.38, #queue-req: 0
+[2026-09-22 21:32:25] Endpoint '/get_server_info' is deprecated and will be removed in a future version. Please use '/server_info' instead.
+[2026-09-22 21:32:25] INFO:     127.0.0.1:37744 - "GET /get_server_info HTTP/1.1" 200 OK
+[2026-09-22 21:32:26] SIGTERM received. signum=None frame=None. Draining requests and shutting down...
+[2026-09-22 21:32:26] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[].
+[2026-09-22 21:32:26] kill_process_tree called: parent_pid=488719, include_parent=True, pid=488719

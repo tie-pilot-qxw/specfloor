@@ -1,0 +1,147 @@
+{
+  "validated": true,
+  "checked_unix": 1790112845.0869884,
+  "points": [
+    {
+      "arm": "baseline",
+      "concurrency": 1,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/baseline_gpu2_attempt001",
+      "raw_sha256": "b6abc616dbb22ba68f1b89a316fe8ec9db6aff1bd7b796979dd0a37ddbb3b55d",
+      "summary_sha256": "100855bdb5a502e2ed2ee63e98f97e5ec8f76daa1e1cafbd66bcacfafd493ffb"
+    },
+    {
+      "arm": "official",
+      "concurrency": 1,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003",
+      "raw_sha256": "b9a5cf97e8cf1661e185c4af9b33c1e50e802bafb2406bca0db748d7a9f1ccb6",
+      "summary_sha256": "775f4684fa7f70500f7f94bcda57a9bcc470676e0af4df0f43449ca600e26cb4"
+    },
+    {
+      "arm": "ours",
+      "concurrency": 1,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/ours_gpu3_attempt003",
+      "raw_sha256": "83cc689fbb0663a9d51bac82ef1df897a09b963bed3219eedea7e22264a6c08f",
+      "summary_sha256": "d0522e201ac55b6b85c99e4cba57bd7a2746f23afdb1d144ded8ded89d7b9bab"
+    },
+    {
+      "arm": "baseline",
+      "concurrency": 4,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "raw_sha256": "d7f85fee5317b2ef572b533cf864c08c57e9ac4d490b57f73c961e6f3f003961",
+      "summary_sha256": "a7b530b92eeedd5889bb6379df552532754f19a4791fa188162051b01fe9e581"
+    },
+    {
+      "arm": "official",
+      "concurrency": 4,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "raw_sha256": "6102347c4fd9f02036dfd65c61b3d8f1f8ce8c82e5e88b94425eaecfa022f4b6",
+      "summary_sha256": "be6fd2f21b60f8e5ed2f8ef35cec087b91f874651e388206c7116639694a28f4"
+    },
+    {
+      "arm": "ours",
+      "concurrency": 4,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001",
+      "raw_sha256": "a85b61575308e0b84a0d1bb2f6f7b3b66b1171bd25db57f3ff1eda431d3c4994",
+      "summary_sha256": "3ef7ec5a176b2f21aa84eb331cde1af029deef4852b6cbe3282bb501dc372fb7"
+    },
+    {
+      "arm": "baseline",
+      "concurrency": 8,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "raw_sha256": "9ae925421e282e75e279d5fb12f3f419c4ee0385223902ceff1f158f49fc871c",
+      "summary_sha256": "3b89b17d2787fe3e190eb89b0f5cf9a22151de62ec489e34a823495115c432bf"
+    },
+    {
+      "arm": "official",
+      "concurrency": 8,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "raw_sha256": "5fa8b167b346dc0a4cfe918691af68a62f81f50c03ccddfc623292149e18f2f9",
+      "summary_sha256": "84c6f5356a1ffcba7a30b9ea56b6ab1fff80e30b9ee70a63059fba66813dcc9b"
+    },
+    {
+      "arm": "ours",
+      "concurrency": 8,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001",
+      "raw_sha256": "18dde4ed6a97b2df0936de20bb212d9d3e345f63b77d68d9e79d5f05ea84107e",
+      "summary_sha256": "c756879b043c92a0d4c58b45cb021d9fc8f85204a4ba60c7ba47f973d1392f05"
+    },
+    {
+      "arm": "baseline",
+      "concurrency": 16,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "raw_sha256": "29114e728b86ed819fe9d67d12498ae9bc0d5f04d86ed323675539c0eb8374cb",
+      "summary_sha256": "e435a76cc31c7cfd527bd6e5fca6f9814430ffb0ba26dfeb0a17b953a001d699"
+    },
+    {
+      "arm": "official",
+      "concurrency": 16,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "raw_sha256": "a0a4e46c205888aba6252ca67e0446c3ba8b5609dd7ecd5d55b39ed17add34f4",
+      "summary_sha256": "0542e329f0a9b4144a1d9740531028d12c5cfe3f1897ea98ebe2457eb9024be2"
+    },
+    {
+      "arm": "ours",
+      "concurrency": 16,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001",
+      "raw_sha256": "90c348edbf7ba005bdd7143082bcd7874ec306681aa6f36578441ff908552086",
+      "summary_sha256": "ea8846800c6dbce5d18b9177a0b02b072df8b138bb32d502867c6d810900bd72"
+    },
+    {
+      "arm": "baseline",
+      "concurrency": 32,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "raw_sha256": "018a9a15a589244e6afff3d2b1d65fe8013eccc49be5bb439ddb49fae9f085df",
+      "summary_sha256": "8aaca50cefcc4ea601a76c7409deac389f60b85049ba7f2a0f6c720bbbc19fe7"
+    },
+    {
+      "arm": "official",
+      "concurrency": 32,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "raw_sha256": "ef997cda20304538ce8f4f1f59b8cb566ff588ed142ea03c15beb4561a2b31cc",
+      "summary_sha256": "30e975ff0bde471df3468c7e1ace887233140d314a2f2f6bb0653aab56507871"
+    },
+    {
+      "arm": "ours",
+      "concurrency": 32,
+      "rows": 3030,
+      "path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001",
+      "raw_sha256": "86c65ccaedc5a50cdd818e5c02cd2d703918e8c3fdbe21c5bdf38bb7133ff125",
+      "summary_sha256": "78829faff7ebca1eae799878e7dd45916330a813e9ce26b91826ed99f10f9994"
+    }
+  ],
+  "sampling": {
+    "baseline": {
+      "samples": 1607,
+      "process_set_unchanged": true,
+      "max_sample_gap_s": 4.298627614974976
+    },
+    "official": {
+      "samples": 559,
+      "process_set_unchanged": true,
+      "max_sample_gap_s": 4.266721725463867
+    },
+    "ours": {
+      "samples": 534,
+      "process_set_unchanged": true,
+      "max_sample_gap_s": 4.2519872188568115
+    }
+  },
+  "note": "C1 reused from original T1 queue; official C1 retained GSM8K and resumed other complete tasks on another GPU. Startup failures excluded.",
+  "total_rows": 45450,
+  "all_previously_validated_drafter_points_unchanged": true,
+  "comparison_sha256": "7d36bde3057cdc1bc0265eb44e3151f068297b4fb805a68ebfc00254f013b306"
+}

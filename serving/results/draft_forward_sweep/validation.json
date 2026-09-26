@@ -1,0 +1,94 @@
+{
+  "request_checks": [
+    {
+      "batch": 1,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 1,
+      "prefix": 1024,
+      "output_ids_match": true
+    },
+    {
+      "batch": 2,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 2,
+      "prefix": 1024,
+      "output_ids_match": true
+    },
+    {
+      "batch": 4,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 4,
+      "prefix": 1024,
+      "output_ids_match": true
+    },
+    {
+      "batch": 8,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 8,
+      "prefix": 1024,
+      "output_ids_match": true
+    },
+    {
+      "batch": 16,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 16,
+      "prefix": 1024,
+      "output_ids_match": true
+    },
+    {
+      "batch": 32,
+      "prefix": 512,
+      "output_ids_match": true
+    },
+    {
+      "batch": 32,
+      "prefix": 1024,
+      "output_ids_match": true
+    }
+  ],
+  "gpu_uuid": "GPU-eb2cffac-d74f-77dc-0221-1955eae16c6a",
+  "sampled_pid_count_max": 2,
+  "gpu_process_samples": 33,
+  "measurement_windows_from_adjacent_server_timestamps": {
+    "official": [
+      "2026-09-22 05:04:36",
+      "2026-09-22 05:04:39"
+    ],
+    "ours": [
+      "2026-09-22 05:05:24",
+      "2026-09-22 05:05:28"
+    ]
+  },
+  "startup_note": "Two GPU processes sampled during official startup; second process gone before the first measured probe. Do not call the whole startup interval exclusive.",
+  "measurement_window_gpu_process_checks": {
+    "official": {
+      "samples": 4,
+      "max_pids": 1,
+      "pids": [
+        "1981255"
+      ]
+    },
+    "ours": {
+      "samples": 4,
+      "max_pids": 1,
+      "pids": [
+        "1987404"
+      ]
+    }
+  }
+}

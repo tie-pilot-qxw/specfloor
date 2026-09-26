@@ -1,0 +1,3 @@
+# Archived records are data, not the live-run output the root patterns exclude.
+!runs/
+!*.jsonl

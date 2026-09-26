@@ -1,0 +1,12 @@
+{
+  "rows": 500,
+  "completion_tokens": 513184,
+  "elapsed_s": 763.4310343789984,
+  "system_output_tokens_per_second": 672.2074121828723,
+  "verification_steps": 133008,
+  "accepted_length": 3.858294237940575,
+  "summed_scheduler_decode_elapsed_s": 749.5854609012604,
+  "post_prefill_output_tokens": 512684,
+  "per_request_decode_tokens_per_second": 683.956702393316,
+  "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+}

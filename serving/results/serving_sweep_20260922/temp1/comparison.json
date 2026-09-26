@@ -1,0 +1,212 @@
+{
+  "1": {
+    "temperature": 1,
+    "concurrency": 1,
+    "per_task_speedup_over_ar": {
+      "official": {
+        "gsm8k": 4.0819664117475565,
+        "math500": 4.076645020218077,
+        "aime25": 3.538597258122847,
+        "humaneval": 3.789117924283579,
+        "mbpp": 3.556701831727835,
+        "livecodebench": 3.4655642058339096,
+        "mt-bench": 2.644504899021893,
+        "alpaca": 2.5435475457256356,
+        "arena-hard-v2": 2.352891085334531
+      },
+      "ours": {
+        "gsm8k": 4.304504625315605,
+        "math500": 4.213693208198666,
+        "aime25": 3.7779976640848543,
+        "humaneval": 4.035385287139263,
+        "mbpp": 3.6905005081710267,
+        "livecodebench": 3.6898204309451734,
+        "mt-bench": 2.763753750391315,
+        "alpaca": 2.690292304151877,
+        "arena-hard-v2": 2.494269424438636
+      }
+    },
+    "macro_speedup_over_ar": {
+      "official": 3.3388373535573184,
+      "ours": 3.5178019114262686
+    },
+    "mean_task_ours_over_official": 1.0539982637321053,
+    "macro_accepted_length": {
+      "official": 4.74799403930296,
+      "ours": 4.941142477139879
+    },
+    "source_paths": {
+      "baseline": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/baseline_gpu2_attempt001",
+      "official": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003",
+      "ours": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/ours_gpu3_attempt003"
+    }
+  },
+  "4": {
+    "temperature": 1,
+    "concurrency": 4,
+    "per_task_speedup_over_ar": {
+      "official": {
+        "gsm8k": 3.7065281204725244,
+        "math500": 3.8594895492083565,
+        "aime25": 3.427063954910266,
+        "humaneval": 3.594333318208814,
+        "mbpp": 3.2657718243961527,
+        "livecodebench": 3.1873003539278506,
+        "mt-bench": 2.4482688317499153,
+        "alpaca": 2.3862551087779296,
+        "arena-hard-v2": 2.3216762830260236
+      },
+      "ours": {
+        "gsm8k": 3.761446839767495,
+        "math500": 3.9782553679863653,
+        "aime25": 3.4227813792474597,
+        "humaneval": 3.690995400593482,
+        "mbpp": 3.359168086517727,
+        "livecodebench": 3.27478906577165,
+        "mt-bench": 2.5964211392374112,
+        "alpaca": 2.4954074160354005,
+        "arena-hard-v2": 2.4223270476764385
+      }
+    },
+    "macro_speedup_over_ar": {
+      "official": 3.132965260519759,
+      "ours": 3.2223990825370477
+    },
+    "mean_task_ours_over_official": 1.0307653268134842,
+    "macro_accepted_length": {
+      "official": 4.760605581168996,
+      "ours": 4.936649770561415
+    },
+    "source_paths": {
+      "baseline": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "official": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "ours": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001"
+    }
+  },
+  "8": {
+    "temperature": 1,
+    "concurrency": 8,
+    "per_task_speedup_over_ar": {
+      "official": {
+        "gsm8k": 3.4450351204244507,
+        "math500": 3.6744915458650205,
+        "aime25": 3.48084012268807,
+        "humaneval": 3.349527750221123,
+        "mbpp": 3.0968831245093553,
+        "livecodebench": 2.9335236701029848,
+        "mt-bench": 2.2759968885420183,
+        "alpaca": 2.2887431404418814,
+        "arena-hard-v2": 2.248290770148858
+      },
+      "ours": {
+        "gsm8k": 3.5728069166345917,
+        "math500": 3.8653878159866313,
+        "aime25": 3.457362591849941,
+        "humaneval": 3.4412867108229768,
+        "mbpp": 3.2004727214259407,
+        "livecodebench": 3.0476173751579845,
+        "mt-bench": 2.4580347914066483,
+        "alpaca": 2.4450847128109388,
+        "arena-hard-v2": 2.391157034495544
+      }
+    },
+    "macro_speedup_over_ar": {
+      "official": 2.977036903660418,
+      "ours": 3.097690074510133
+    },
+    "mean_task_ours_over_official": 1.0437630941487601,
+    "macro_accepted_length": {
+      "official": 4.755665093179821,
+      "ours": 4.932338105871455
+    },
+    "source_paths": {
+      "baseline": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "official": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "ours": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001"
+    }
+  },
+  "16": {
+    "temperature": 1,
+    "concurrency": 16,
+    "per_task_speedup_over_ar": {
+      "official": {
+        "gsm8k": 2.9455317275825874,
+        "math500": 3.3678399206445606,
+        "aime25": 2.9843976297869665,
+        "humaneval": 3.4184560801798973,
+        "mbpp": 2.6511480096490283,
+        "livecodebench": 2.544043363394806,
+        "mt-bench": 2.173040681645455,
+        "alpaca": 2.0803555437610695,
+        "arena-hard-v2": 2.0359408835008495
+      },
+      "ours": {
+        "gsm8k": 3.0739746064570794,
+        "math500": 3.489954737844973,
+        "aime25": 3.2431405645738427,
+        "humaneval": 3.4211308228134056,
+        "mbpp": 2.7743879432016794,
+        "livecodebench": 2.6988738793969786,
+        "mt-bench": 2.402473600211424,
+        "alpaca": 2.265688511612554,
+        "arena-hard-v2": 2.171138620002069
+      }
+    },
+    "macro_speedup_over_ar": {
+      "official": 2.6889726489050245,
+      "ours": 2.8378625873460006
+    },
+    "mean_task_ours_over_official": 1.0595295335168666,
+    "macro_accepted_length": {
+      "official": 4.7434279474248795,
+      "ours": 4.933198268257124
+    },
+    "source_paths": {
+      "baseline": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "official": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "ours": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001"
+    }
+  },
+  "32": {
+    "temperature": 1,
+    "concurrency": 32,
+    "per_task_speedup_over_ar": {
+      "official": {
+        "gsm8k": 3.2530296479439436,
+        "math500": 3.1906093299685057,
+        "aime25": 2.8320739431994615,
+        "humaneval": 2.858496845956025,
+        "mbpp": 3.6899513723059267,
+        "livecodebench": 2.4783538736644903,
+        "mt-bench": 2.022461883129104,
+        "alpaca": 2.145404045824679,
+        "arena-hard-v2": 1.7852320330067637
+      },
+      "ours": {
+        "gsm8k": 3.351621476603508,
+        "math500": 3.4239275803245297,
+        "aime25": 3.1938158859146717,
+        "humaneval": 2.648320926963121,
+        "mbpp": 3.91791983158805,
+        "livecodebench": 2.5150687797284963,
+        "mt-bench": 2.2377119096094003,
+        "alpaca": 2.259165133121935,
+        "arena-hard-v2": 1.9298269218317337
+      }
+    },
+    "macro_speedup_over_ar": {
+      "official": 2.695068108333211,
+      "ours": 2.8308198272983827
+    },
+    "mean_task_ours_over_official": 1.0527425817299192,
+    "macro_accepted_length": {
+      "official": 4.758369877623603,
+      "ours": 4.955894789729677
+    },
+    "source_paths": {
+      "baseline": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "official": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "ours": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001"
+    }
+  }
+}

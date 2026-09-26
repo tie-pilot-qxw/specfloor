@@ -1,0 +1,467 @@
+{
+  "version": 1,
+  "points": [
+    {
+      "temperature": 0,
+      "concurrency": 1,
+      "arm": "baseline",
+      "run": "temp0_baseline_attempt_001",
+      "raw": "runs/temp0_baseline_attempt_001/baseline.c1.jsonl.gz",
+      "raw_sha256": "d907e33b3feca92ffaae55f0e3beaf4647fa34a6fe9a9595e4ab16d29f68d1f4",
+      "summary": "runs/temp0_baseline_attempt_001/baseline.c1.summary.json",
+      "complete": "runs/temp0_baseline_attempt_001/baseline.c1.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 1,
+      "arm": "official",
+      "run": "temp0_official_official_gpu6_attempt001",
+      "raw": "runs/temp0_official_official_gpu6_attempt001/official.c1.jsonl.gz",
+      "raw_sha256": "5f28fcfc87cf231b75c8ac8297413cf0dcebd0a176f3400c9c4fcc8268e5adc5",
+      "summary": "runs/temp0_official_official_gpu6_attempt001/official.c1.summary.json",
+      "complete": "runs/temp0_official_official_gpu6_attempt001/official.c1.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 1,
+      "arm": "ours",
+      "run": "temp0_ours_ours_gpu6_attempt001",
+      "raw": "runs/temp0_ours_ours_gpu6_attempt001/ours.c1.jsonl.gz",
+      "raw_sha256": "e01756ae81a7bdfa341d88fe836126922ed303e08d10abfa549526fddd8d23e4",
+      "summary": "runs/temp0_ours_ours_gpu6_attempt001/ours.c1.summary.json",
+      "complete": "runs/temp0_ours_ours_gpu6_attempt001/ours.c1.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 4,
+      "arm": "baseline",
+      "run": "temp0_baseline_attempt_001",
+      "raw": "runs/temp0_baseline_attempt_001/baseline.c4.jsonl.gz",
+      "raw_sha256": "ba5cd0a2141ca6f258c9589cca77e29add01cc619ed04d4317689e617476a5b5",
+      "summary": "runs/temp0_baseline_attempt_001/baseline.c4.summary.json",
+      "complete": "runs/temp0_baseline_attempt_001/baseline.c4.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 4,
+      "arm": "official",
+      "run": "temp0_official_official_gpu6_attempt001",
+      "raw": "runs/temp0_official_official_gpu6_attempt001/official.c4.jsonl.gz",
+      "raw_sha256": "754a9ecb3273f5312a18a3d19f6c63a817fea5e0f1c91c75d58b5646e49cb627",
+      "summary": "runs/temp0_official_official_gpu6_attempt001/official.c4.summary.json",
+      "complete": "runs/temp0_official_official_gpu6_attempt001/official.c4.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 4,
+      "arm": "ours",
+      "run": "temp0_ours_ours_gpu6_attempt001",
+      "raw": "runs/temp0_ours_ours_gpu6_attempt001/ours.c4.jsonl.gz",
+      "raw_sha256": "3b54f8a440baf03f0c31a9b3873c3751b177f3d55434327bf4cde3a08c1dbe25",
+      "summary": "runs/temp0_ours_ours_gpu6_attempt001/ours.c4.summary.json",
+      "complete": "runs/temp0_ours_ours_gpu6_attempt001/ours.c4.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 8,
+      "arm": "baseline",
+      "run": "temp0_baseline_attempt_001",
+      "raw": "runs/temp0_baseline_attempt_001/baseline.c8.jsonl.gz",
+      "raw_sha256": "306edbf7eda756ba60a4dab19fe83dc9419d870c761bd8dce5c6f711943043a4",
+      "summary": "runs/temp0_baseline_attempt_001/baseline.c8.summary.json",
+      "complete": "runs/temp0_baseline_attempt_001/baseline.c8.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 8,
+      "arm": "official",
+      "run": "temp0_official_official_gpu6_attempt001",
+      "raw": "runs/temp0_official_official_gpu6_attempt001/official.c8.jsonl.gz",
+      "raw_sha256": "0ab718100b26c4ebd0b38a6fb864daefe35161f905a8cde4fd73de9f6b047692",
+      "summary": "runs/temp0_official_official_gpu6_attempt001/official.c8.summary.json",
+      "complete": "runs/temp0_official_official_gpu6_attempt001/official.c8.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 8,
+      "arm": "ours",
+      "run": "temp0_ours_ours_gpu6_attempt001",
+      "raw": "runs/temp0_ours_ours_gpu6_attempt001/ours.c8.jsonl.gz",
+      "raw_sha256": "984286b126f02ba6064c9206493fb4d5112fc87db19285e6c1dc29c7458a63ea",
+      "summary": "runs/temp0_ours_ours_gpu6_attempt001/ours.c8.summary.json",
+      "complete": "runs/temp0_ours_ours_gpu6_attempt001/ours.c8.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 16,
+      "arm": "baseline",
+      "run": "temp0_baseline_attempt_001",
+      "raw": "runs/temp0_baseline_attempt_001/baseline.c16.jsonl.gz",
+      "raw_sha256": "322505d66d56992415df2a208d1019db8b2dd5307fad009f2a6a096534a7b806",
+      "summary": "runs/temp0_baseline_attempt_001/baseline.c16.summary.json",
+      "complete": "runs/temp0_baseline_attempt_001/baseline.c16.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 16,
+      "arm": "official",
+      "run": "temp0_official_official_gpu6_attempt001",
+      "raw": "runs/temp0_official_official_gpu6_attempt001/official.c16.jsonl.gz",
+      "raw_sha256": "9bbdcaecb61bace928c7a70d95a2343ae05628f4a4224fff1ce1778c326c400c",
+      "summary": "runs/temp0_official_official_gpu6_attempt001/official.c16.summary.json",
+      "complete": "runs/temp0_official_official_gpu6_attempt001/official.c16.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 16,
+      "arm": "ours",
+      "run": "temp0_ours_ours_gpu6_attempt001",
+      "raw": "runs/temp0_ours_ours_gpu6_attempt001/ours.c16.jsonl.gz",
+      "raw_sha256": "cf4f43403ef1590a4e586d0eea35a5da8536e84fbd48df930fc329e8d076abfc",
+      "summary": "runs/temp0_ours_ours_gpu6_attempt001/ours.c16.summary.json",
+      "complete": "runs/temp0_ours_ours_gpu6_attempt001/ours.c16.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 32,
+      "arm": "baseline",
+      "run": "temp0_baseline_attempt_001",
+      "raw": "runs/temp0_baseline_attempt_001/baseline.c32.jsonl.gz",
+      "raw_sha256": "2e81c89bf6c7edd257f79dd47500efb4a63c823bf72f70329e2b014f95026088",
+      "summary": "runs/temp0_baseline_attempt_001/baseline.c32.summary.json",
+      "complete": "runs/temp0_baseline_attempt_001/baseline.c32.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 32,
+      "arm": "official",
+      "run": "temp0_official_official_gpu6_attempt001",
+      "raw": "runs/temp0_official_official_gpu6_attempt001/official.c32.jsonl.gz",
+      "raw_sha256": "1d96331f29c41d0b24b96315d087cf6def877dc2f8f7f619a840a4fa6bacbfaa",
+      "summary": "runs/temp0_official_official_gpu6_attempt001/official.c32.summary.json",
+      "complete": "runs/temp0_official_official_gpu6_attempt001/official.c32.complete.json"
+    },
+    {
+      "temperature": 0,
+      "concurrency": 32,
+      "arm": "ours",
+      "run": "temp0_ours_ours_gpu6_attempt001",
+      "raw": "runs/temp0_ours_ours_gpu6_attempt001/ours.c32.jsonl.gz",
+      "raw_sha256": "964090f9a06d2b029da72d8f7ab04e27da6313e42b2672878b7334cb7311ace6",
+      "summary": "runs/temp0_ours_ours_gpu6_attempt001/ours.c32.summary.json",
+      "complete": "runs/temp0_ours_ours_gpu6_attempt001/ours.c32.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 1,
+      "arm": "baseline",
+      "run": "temp1_baseline_baseline_gpu2_attempt001",
+      "raw": "runs/temp1_baseline_baseline_gpu2_attempt001/baseline.c1.jsonl.gz",
+      "raw_sha256": "b6abc616dbb22ba68f1b89a316fe8ec9db6aff1bd7b796979dd0a37ddbb3b55d",
+      "summary": "runs/temp1_baseline_baseline_gpu2_attempt001/baseline.c1.summary.json",
+      "complete": "runs/temp1_baseline_baseline_gpu2_attempt001/baseline.c1.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 1,
+      "arm": "official",
+      "run": "temp1_official_official_gpu6_attempt003",
+      "raw": "runs/temp1_official_official_gpu6_attempt003/official.c1.jsonl.gz",
+      "raw_sha256": "b9a5cf97e8cf1661e185c4af9b33c1e50e802bafb2406bca0db748d7a9f1ccb6",
+      "summary": "runs/temp1_official_official_gpu6_attempt003/official.c1.summary.json",
+      "complete": "runs/temp1_official_official_gpu6_attempt003/official.c1.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 1,
+      "arm": "ours",
+      "run": "temp1_ours_ours_gpu3_attempt003",
+      "raw": "runs/temp1_ours_ours_gpu3_attempt003/ours.c1.jsonl.gz",
+      "raw_sha256": "83cc689fbb0663a9d51bac82ef1df897a09b963bed3219eedea7e22264a6c08f",
+      "summary": "runs/temp1_ours_ours_gpu3_attempt003/ours.c1.summary.json",
+      "complete": "runs/temp1_ours_ours_gpu3_attempt003/ours.c1.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 4,
+      "arm": "baseline",
+      "run": "temp1_baseline_baseline_gpu0_attempt001",
+      "raw": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c4.jsonl.gz",
+      "raw_sha256": "d7f85fee5317b2ef572b533cf864c08c57e9ac4d490b57f73c961e6f3f003961",
+      "summary": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c4.summary.json",
+      "complete": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c4.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 4,
+      "arm": "official",
+      "run": "temp1_official_official_gpu2_attempt001",
+      "raw": "runs/temp1_official_official_gpu2_attempt001/official.c4.jsonl.gz",
+      "raw_sha256": "6102347c4fd9f02036dfd65c61b3d8f1f8ce8c82e5e88b94425eaecfa022f4b6",
+      "summary": "runs/temp1_official_official_gpu2_attempt001/official.c4.summary.json",
+      "complete": "runs/temp1_official_official_gpu2_attempt001/official.c4.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 4,
+      "arm": "ours",
+      "run": "temp1_ours_ours_gpu3_attempt001",
+      "raw": "runs/temp1_ours_ours_gpu3_attempt001/ours.c4.jsonl.gz",
+      "raw_sha256": "a85b61575308e0b84a0d1bb2f6f7b3b66b1171bd25db57f3ff1eda431d3c4994",
+      "summary": "runs/temp1_ours_ours_gpu3_attempt001/ours.c4.summary.json",
+      "complete": "runs/temp1_ours_ours_gpu3_attempt001/ours.c4.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 8,
+      "arm": "baseline",
+      "run": "temp1_baseline_baseline_gpu0_attempt001",
+      "raw": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c8.jsonl.gz",
+      "raw_sha256": "9ae925421e282e75e279d5fb12f3f419c4ee0385223902ceff1f158f49fc871c",
+      "summary": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c8.summary.json",
+      "complete": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c8.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 8,
+      "arm": "official",
+      "run": "temp1_official_official_gpu2_attempt001",
+      "raw": "runs/temp1_official_official_gpu2_attempt001/official.c8.jsonl.gz",
+      "raw_sha256": "5fa8b167b346dc0a4cfe918691af68a62f81f50c03ccddfc623292149e18f2f9",
+      "summary": "runs/temp1_official_official_gpu2_attempt001/official.c8.summary.json",
+      "complete": "runs/temp1_official_official_gpu2_attempt001/official.c8.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 8,
+      "arm": "ours",
+      "run": "temp1_ours_ours_gpu3_attempt001",
+      "raw": "runs/temp1_ours_ours_gpu3_attempt001/ours.c8.jsonl.gz",
+      "raw_sha256": "18dde4ed6a97b2df0936de20bb212d9d3e345f63b77d68d9e79d5f05ea84107e",
+      "summary": "runs/temp1_ours_ours_gpu3_attempt001/ours.c8.summary.json",
+      "complete": "runs/temp1_ours_ours_gpu3_attempt001/ours.c8.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 16,
+      "arm": "baseline",
+      "run": "temp1_baseline_baseline_gpu0_attempt001",
+      "raw": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c16.jsonl.gz",
+      "raw_sha256": "29114e728b86ed819fe9d67d12498ae9bc0d5f04d86ed323675539c0eb8374cb",
+      "summary": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c16.summary.json",
+      "complete": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c16.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 16,
+      "arm": "official",
+      "run": "temp1_official_official_gpu2_attempt001",
+      "raw": "runs/temp1_official_official_gpu2_attempt001/official.c16.jsonl.gz",
+      "raw_sha256": "a0a4e46c205888aba6252ca67e0446c3ba8b5609dd7ecd5d55b39ed17add34f4",
+      "summary": "runs/temp1_official_official_gpu2_attempt001/official.c16.summary.json",
+      "complete": "runs/temp1_official_official_gpu2_attempt001/official.c16.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 16,
+      "arm": "ours",
+      "run": "temp1_ours_ours_gpu3_attempt001",
+      "raw": "runs/temp1_ours_ours_gpu3_attempt001/ours.c16.jsonl.gz",
+      "raw_sha256": "90c348edbf7ba005bdd7143082bcd7874ec306681aa6f36578441ff908552086",
+      "summary": "runs/temp1_ours_ours_gpu3_attempt001/ours.c16.summary.json",
+      "complete": "runs/temp1_ours_ours_gpu3_attempt001/ours.c16.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 32,
+      "arm": "baseline",
+      "run": "temp1_baseline_baseline_gpu0_attempt001",
+      "raw": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c32.jsonl.gz",
+      "raw_sha256": "018a9a15a589244e6afff3d2b1d65fe8013eccc49be5bb439ddb49fae9f085df",
+      "summary": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c32.summary.json",
+      "complete": "runs/temp1_baseline_baseline_gpu0_attempt001/baseline.c32.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 32,
+      "arm": "official",
+      "run": "temp1_official_official_gpu2_attempt001",
+      "raw": "runs/temp1_official_official_gpu2_attempt001/official.c32.jsonl.gz",
+      "raw_sha256": "ef997cda20304538ce8f4f1f59b8cb566ff588ed142ea03c15beb4561a2b31cc",
+      "summary": "runs/temp1_official_official_gpu2_attempt001/official.c32.summary.json",
+      "complete": "runs/temp1_official_official_gpu2_attempt001/official.c32.complete.json"
+    },
+    {
+      "temperature": 1,
+      "concurrency": 32,
+      "arm": "ours",
+      "run": "temp1_ours_ours_gpu3_attempt001",
+      "raw": "runs/temp1_ours_ours_gpu3_attempt001/ours.c32.jsonl.gz",
+      "raw_sha256": "86c65ccaedc5a50cdd818e5c02cd2d703918e8c3fdbe21c5bdf38bb7133ff125",
+      "summary": "runs/temp1_ours_ours_gpu3_attempt001/ours.c32.summary.json",
+      "complete": "runs/temp1_ours_ours_gpu3_attempt001/ours.c32.complete.json"
+    }
+  ],
+  "runs": {
+    "temp0_baseline_attempt_001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_gpu3_clean/attempt_001",
+      "manifest": "runs/temp0_baseline_attempt_001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py"
+      }
+    },
+    "temp0_official_official_gpu6_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_parallel/official_gpu6_attempt001",
+      "manifest": "runs/temp0_official_official_gpu6_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py"
+      }
+    },
+    "temp0_ours_ours_gpu6_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_parallel/ours_gpu6_attempt001",
+      "manifest": "runs/temp0_ours_ours_gpu6_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py"
+      }
+    },
+    "temp1_baseline_baseline_gpu2_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/baseline_gpu2_attempt001",
+      "manifest": "runs/temp1_baseline_baseline_gpu2_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_arm.py": "sources/5456ed85c0c2eb418e17c3ccedd73f1100617122e53b95d0ab784b0152d43418_run_serving_temp1_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    },
+    "temp1_official_official_gpu6_attempt003": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003",
+      "manifest": "runs/temp1_official_official_gpu6_attempt003/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_arm.py": "sources/5456ed85c0c2eb418e17c3ccedd73f1100617122e53b95d0ab784b0152d43418_run_serving_temp1_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    },
+    "temp1_ours_ours_gpu3_attempt003": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/ours_gpu3_attempt003",
+      "manifest": "runs/temp1_ours_ours_gpu3_attempt003/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_arm.py": "sources/5456ed85c0c2eb418e17c3ccedd73f1100617122e53b95d0ab784b0152d43418_run_serving_temp1_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    },
+    "temp1_baseline_baseline_gpu0_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/baseline_gpu0_attempt001",
+      "manifest": "runs/temp1_baseline_baseline_gpu0_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_batch_arm.py": "sources/3f12d4ca66ef96719454e6b93a5bf204b0f416942fc27e89a54b5bb7b3cd4400_run_serving_temp1_batch_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    },
+    "temp1_official_official_gpu2_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/official_gpu2_attempt001",
+      "manifest": "runs/temp1_official_official_gpu2_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_batch_arm.py": "sources/3f12d4ca66ef96719454e6b93a5bf204b0f416942fc27e89a54b5bb7b3cd4400_run_serving_temp1_batch_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    },
+    "temp1_ours_ours_gpu3_attempt001": {
+      "original_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_sweep_20260922/ours_gpu3_attempt001",
+      "manifest": "runs/temp1_ours_ours_gpu3_attempt001/manifest.json",
+      "sources": {
+        "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "sources/3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0_run_serving_sweep.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "sources/c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233_serving_sweep_client.py",
+        "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "sources/6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a_sitecustomize.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "sources/97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde_scheduler.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "sources/3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f_req_time_stats.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "sources/88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363_batch_result_processor.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "sources/316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277_dspark.py",
+        "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "sources/3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a_dspark_draft.py",
+        "/workspace/DeepSpec/refine_exp/run_serving_temp1_batch_arm.py": "sources/3f12d4ca66ef96719454e6b93a5bf204b0f416942fc27e89a54b5bb7b3cd4400_run_serving_temp1_batch_arm.py",
+        "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "sources/e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1_serving_temp1_client.py",
+        "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "sources/6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e_resume_serving_sweep.py"
+      }
+    }
+  },
+  "source_files": {},
+  "temperatures": [
+    0,
+    1
+  ],
+  "concurrencies": [
+    1,
+    4,
+    8,
+    16,
+    32
+  ],
+  "rows_per_point": 3030,
+  "aggregation": "Arithmetic mean of nine per-task ratios; includes prefill and HTTP.",
+  "recovery_note": "T0 AR/attn C1 and T1 official C1 resumed at whole-task boundaries. Failed/unsaved work excluded; originals and recovery provenance retained.",
+  "prepared_requests_sha256": "b5efd513e563d20f5880fec8cf25c3e2afb1899bf19ae1a96d0334811bb24831"
+}
