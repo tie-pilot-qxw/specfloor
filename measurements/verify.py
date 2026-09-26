@@ -720,14 +720,22 @@ def blocklen():
         check(f"T^(0) slot {k}", T0[k], rows[k]["T0"])
     check("T^(0) slot 15 (text)", "0.473", rows[15]["T0"])
     check("acceptance cap at slot 15", "52.7", 1 - rows[15]["T0"], pct=True)
-    for d, v in (("alpaca", "0.620"), ("arena8k", "0.479"), ("mbpp", "0.389"),
+    for d, v in (("alpaca", "0.619"), ("arena8k", "0.479"), ("mbpp", "0.389"),
                  ("gsm8k", "0.377")):
-        check(f"slot-15 T^(0), {d}", v, BL.floor_mean(by[d], 0, 15),
-              erratum="0.619" if d == "alpaca" else None)
-    # TODO(gamma=16 T^(1)): the paper's T^(1) row, its 90.3-96.5% and <= 0.046,
-    # and the slot-6 interval [.012,.026] came from the first gamma=16 run, whose
-    # probe_tk predated b6e6597; fill these in from the re-run archived here.
-    # Its slots 1-6 must match t1_fix/ on the shared anchors (blocklen_report).
+        check(f"slot-15 T^(0), {d}", v, BL.floor_mean(by[d], 0, 15))
+    # T^(1) is the corrected re-run; the first gamma=16 run's probe_tk predated
+    # b6e6597 and printed a row about half this size at the deep slots.
+    T1 = (None, "0.00", "2.5e-3", "0.02", "0.02", "0.03", "0.04", "0.04",
+          "0.04", "0.05", "0.04", "0.04", "0.06", "0.06", "0.05", "0.09")
+    for k in range(1, K):
+        check(f"T^(1) slot {k}", T1[k], rows[k]["T1"])
+    deep = [r["removed"] for r in rows[2:]]
+    check("share of T^(0) removed, slots 2-15, low", "80.9", min(deep), pct=True)
+    check("share of T^(0) removed, slots 2-15, high", "97.9", max(deep), pct=True)
+    check("largest T^(1), slots 1-15", "0.090", max(r["T1"] for r in rows[1:]))
+    lo6 = RR.interval(recs, RR.nested("T", 1, 6), B=C.BOOTSTRAP_B, seed=C.SEED)
+    check("T^(1) slot 6 (text)", "0.036", lo6[0])
+    check_ci("T^(1) slot 6 interval", "[.019,.056]", lo6[1], lo6[2])
     short = {(r["prompt_id"], r["t"]): r for r in load("t1_fix/*.t01.jsonl.gz")}
     mine = [r for r in recs if (r["prompt_id"], r["t"]) in short]
     theirs = [short[(r["prompt_id"], r["t"])] for r in mine]

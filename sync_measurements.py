@@ -31,7 +31,13 @@ SKIP_DIRS = {"__pycache__", ".git", ".ipynb_checkpoints"}
 # under the same configuration and the archive should hold one answer per
 # question, not a history of them.
 SKIP_PATHS = ("t1/", "scale/gemma12b/", "scale/qwen14b/arena8k.",
-              "scale/qwen14b/C0/arena8k.")
+              "scale/qwen14b/C0/arena8k.",
+              # the first gamma=16 run: probe_tk before b6e6597's slot fix
+              "g16/")
+
+# Runs archived under another name. The corrected gamma=16 run was written to
+# g16_fix/ next to the superseded g16/, and is the only gamma=16 run archived.
+RENAME = {"g16_fix/": "g16/"}
 
 # probe_tk's m>=1 columns are carried only by t1_fix/ and g16/. Elsewhere the
 # probe was run with --rungs 0,1 for the order-0 column alone, and the order-1
@@ -78,6 +84,9 @@ def main() -> int:
             continue
         if only and not any(str(rel).startswith(o) for o in only):
             continue
+        for a, b in RENAME.items():
+            if str(rel).startswith(a):
+                rel = pathlib.Path(b + str(rel)[len(a):])
         suffix = "".join(pathlib.Path(rel.name).suffixes)
         if not (any(s in suffix for s in GZIP) or rel.suffix in PLAIN):
             continue

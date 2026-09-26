@@ -46,7 +46,7 @@ serving, Sec. 6 the prefix-attention head, and appendices by title.
 | `rpre_o1_m1024/` | `probe_rpre --order 1` | `rpre_o1/` at four times the paths, to settle whether the two `T^(1)` estimators differ by resolution. `PREDICTION.md` was written before it ran | App. Independent replication |
 | `rpre_c1/` | `probe_rpre` | gsm8k under the training law C1, and the same C1 prefixes under the C0 law | App. Sampling-law sensitivity |
 | `gate_c1/` | `corpus` | the C1 corpus and its cross-engine verification | App. Sampling-law sensitivity |
-| `g16/` | `probe_tk`, `SPECFLOOR_GAMMA=16` | `T^(0)` and `T^(1)` over sixteen slots, on the 372 anchors with room for the block; `run.sh` is the invocation | App. Longer blocks |
+| `g16/` | `probe_tk`, `SPECFLOOR_GAMMA=16` | `T^(0)` and `T^(1)` over sixteen slots, on the 372 anchors with room for the block; `run.sh` is the invocation. Same seeds and paths as `t1_fix/`, so slots 0-6 equal it on those anchors. Raw run directory `g16_fix/`; the superseded first run (`g16/` there, probe_tk before b6e6597) is not archived | App. Longer blocks |
 
 ## Two things in here that are evidence rather than data
 
