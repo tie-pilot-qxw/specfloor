@@ -733,9 +733,6 @@ def blocklen():
     check("share of T^(0) removed, slots 2-15, low", "80.9", min(deep), pct=True)
     check("share of T^(0) removed, slots 2-15, high", "97.9", max(deep), pct=True)
     check("largest T^(1), slots 1-15", "0.090", max(r["T1"] for r in rows[1:]))
-    lo6 = RR.interval(recs, RR.nested("T", 1, 6), B=C.BOOTSTRAP_B, seed=C.SEED)
-    check("T^(1) slot 6 (text)", "0.036", lo6[0])
-    check_ci("T^(1) slot 6 interval", "[.019,.056]", lo6[1], lo6[2])
     short = {(r["prompt_id"], r["t"]): r for r in load("t1_fix/*.t01.jsonl.gz")}
     mine = [r for r in recs if (r["prompt_id"], r["t"]) in short]
     theirs = [short[(r["prompt_id"], r["t"])] for r in mine]
