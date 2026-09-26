@@ -48,7 +48,7 @@ The split is not a packaging accident — it is the same split the measurement
 makes. Running a DFlash/DSpark block forward pass is what needs
 [DeepSpec](https://github.com/deepseek-ai/DeepSpec); computing a floor does not.
 
-So **23 of the 26 modules import with no DeepSpec at all**, including every
+So **30 of the 33 modules import with no DeepSpec at all**, including every
 report. The three that need it resolve their symbols lazily through
 `specfloor._deepspec`, and a missing install fails with an instruction rather
 than a traceback:
@@ -101,9 +101,11 @@ before any GPU time is spent.
 | `probe_rpre` | `R` and `G`, exact TV over the full vocabulary | **yes** |
 | `probe_br` | per-path accept factors, for the best-response analysis | **yes** |
 
-Reports are pure post-processing over the recorded `jsonl` and never touch a GPU:
-`rpre_report`, `tk_report`, `kmedian_report`, `api_floor_report`, `srv_report`,
-`rm_compare`, `br_report`, `br_iter`.
+Reports are pure post-processing over the recorded `jsonl` -- a live run's, or
+the archive's gzipped copy -- and never touch a GPU: `rpre_report`,
+`rpre_compare`, `ratio_report`, `tk_report`, `blocklen_report`,
+`concentration_report`, `mi_report`, `kmedian_report`, `api_floor_report`,
+`topk_compare`, `srv_report`, `rm_compare`, `br_report`, `br_iter`.
 
 ## Two invariants the code will not break
 
@@ -149,14 +151,19 @@ needs.
 
 [`measurements/`](measurements/) holds every record behind the paper as the
 probes wrote it — four targets, four domains, both drafters, the API cohort and
-the per-path accept-factor recordings — 230 MB of `jsonl` stored gzipped at 31
-MB, with a manifest carrying the row count and raw SHA-256 of each file.
+the per-path accept-factor recordings, and the prefix-attention drafter's
+paired decomposition — 240 MB of `jsonl` stored gzipped at 32 MB, with a
+manifest carrying the row count and raw SHA-256 of each file.
 
 ```bash
-python -m measurements.verify
+python -m measurements.verify            # about ten minutes; --fast skips the best responses
+python -m paper.figures                  # the measurement figures, drawn from the same records
 ```
 
-reads that directory and prints every headline number in the paper beside the
-value it recomputes from the records, with the estimator the paper describes.
-It is the only claim this repository makes that does not need a GPU to check.
+`verify` recomputes every number the paper reads off that directory -- the
+tables, the figures' values, the intervals and the in-text shares -- through the
+report that prints it, and sets each beside the value the paper prints, at the
+paper's precision. Where the paper prints a stale value it says so, with the
+value the archive gives. It is the only claim this repository makes that does
+not need a GPU to check.
 

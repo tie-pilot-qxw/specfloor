@@ -325,7 +325,7 @@ class TargetEngine:
             if len(got) != want_n + 1:
                 raise RuntimeError(
                     f"input_top_logprobs has {len(got)} rows, expected "
-                    f"{want_n+1} (same leading-None convention as §2).")
+                    f"{want_n+1} (the leading None row input_token_logprobs also carries).")
             res.append([_as_topk(g) for g in got[1:]])
         return res
 
@@ -380,7 +380,7 @@ class TargetEngine:
             if len(got) != want_n + 1:
                 raise RuntimeError(
                     f"input_top_logprobs has {len(got)} rows, expected "
-                    f"{want_n+1} (same leading-None convention as §2).")
+                    f"{want_n+1} (the leading None row input_token_logprobs also carries).")
             tops.append([_as_topk(g) for g in got[1:]])
         return nll, tops
 

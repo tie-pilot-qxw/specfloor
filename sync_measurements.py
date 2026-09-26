@@ -33,9 +33,9 @@ SKIP_DIRS = {"__pycache__", ".git", ".ipynb_checkpoints"}
 SKIP_PATHS = ("t1/", "scale/gemma12b/", "scale/qwen14b/arena8k.",
               "scale/qwen14b/C0/arena8k.")
 
-# probe_tk's m>=1 columns are carried only by t1_fix/. Elsewhere the probe was
-# run with --rungs 0,1 for the order-0 column alone, and the order-1 fields
-# those runs also emitted are dropped rather than shipped unused.
+# probe_tk's m>=1 columns are carried only by t1_fix/ and g16/. Elsewhere the
+# probe was run with --rungs 0,1 for the order-0 column alone, and the order-1
+# fields those runs also emitted are dropped rather than shipped unused.
 DROP_ORDER1 = ("tk20/", "scale/")
 
 

@@ -31,17 +31,24 @@ floor needs the target alone, measuring a gap needs a drafter as well.
 
 | | |
 |---|---|
-| `config.py` | every frozen constant; no probe takes its own default |
-| `stats.py` | hierarchical bootstrap (outer unit = prompt), weighted aggregation, decomposition bounds |
+| `config.py` | every frozen constant; no probe takes its own default. `SPECFLOOR_GAMMA` overrides the block length |
+| `records.py` | reads a live run's `jsonl` or the archive's `jsonl.gz` alike; counts malformed lines |
+| `stats.py` | hierarchical bootstrap (outer unit = prompt), weighted aggregation, decomposition bounds, and the vectorised ratio bootstrap every share below uses |
 | `anchors.py` | eligible population → strata → weighted sample with `pi` |
 | `test_estimators.py` | estimator identities against closed forms; gates the run, no GPU |
 | `mc_ladder.py` | the M-convergence evidence for the path count |
 | `rpre_report.py` | `T`, `R`, `G` per slot, paired bootstrap |
 | `tk_report.py` | `T^(0)` and `T^(1)` from the importance-sampling arm |
+| `blocklen_report.py` | the same at a longer block, paired against the gamma=7 run on shared anchors |
+| `ratio_report.py` | the shares the paper quotes -- `G/R`, `(T0 - T1)/T0` -- with prompt-bootstrap intervals, per target |
+| `rpre_compare.py` | two order-1 drafters on the same anchors: paired per-slot differences and the decomposition |
+| `concentration_report.py` | how unevenly the floor sits over anchors; effective support of the paths |
+| `mi_report.py` | the recovery fractions `rho_{k,m}`, with the audit that makes `1/pi` the whole weight |
+| `topk_compare.py` | a narrow vocabulary read against a wide one, paired per cell |
 | `kmedian_report.py` | the K-median decomposition of the floor |
 | `api_floor_report.py` | the floor measured through an endpoint |
 | `srv_report.py` | free-rollout vs survival-weighted risk, and `E[prod a]` |
-| `rm_compare.py` | the log-loss companion, and the gate-relaxation check |
+| `rm_compare.py` | conditional against interventional `R_m`, the estimator comparison behind `probe_rm` |
 | `br_report.py` | single-slot best response, cross-fitted |
 | `br_iter.py` | the same swept to a fixed point; both sweep orders |
 
@@ -75,6 +82,7 @@ python -m specfloor.test_estimators                       # no GPU, seconds
 python -m specfloor.verify_backend --phase hf  --corpus-file <C1 corpus> --out /tmp/v
 python -m specfloor.verify_backend --phase sgl --corpus-file <C1 corpus> --out /tmp/v
 python -m specfloor.verify_backend --phase cmp --out /tmp/v
+pytest tests/                                             # slot alignment, head context
 ```
 
 Run the backend check on **C1**, not only C0. C1 is temp-0.7/top-p-0.8/top-k-20, which is where a
@@ -84,9 +92,10 @@ temperature-contaminated read would show up; a C0-only check passes while the re
 cross-entropy — impossible by definition — and nothing downstream noticed until a population mean
 came out absurd three stages later.
 
-## Why `MAIN_M = 128`, and why the ladder is not optional
+## Why the path count comes from the ladder
 
-`MAIN_M` was first guessed at 64. The ladder rejected it: on C0/gsm8k (252 anchors / 70 prompts,
+`MAIN_M` was first guessed at 64 and ended at 512 (`config.py` records the
+per-domain convergence). The ladder rejected 64 first: on C0/gsm8k (252 anchors / 70 prompts,
 slot 6) the shift to `M=256`, measured in each statistic's own sampling-CI half-widths, was
 
 | | from M=64 | from M=128 |
@@ -240,7 +249,7 @@ share the anchors and the ladder file but not the estimator.
 python -m specfloor.probe_tk --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.ladder.M512.jsonl --out runs/tk/gsm8k.t01.jsonl \
     --anchors 96 --paths 1024 --top-k 256 --rungs 0,1 --split
-python -m specfloor.tk_report --tk 'runs/tk/*.t01.jsonl' --by-domain
+python -m specfloor.tk_report --tk 'runs/tk/*.t01.jsonl'
 
 # 9. the gap. R for the REAL drafter on the same paths, full vocabulary, so
 #    G = R - T is a difference of two numbers from one rollout rather than two
@@ -253,8 +262,18 @@ python -m specfloor.probe_rpre --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
 python -m specfloor.probe_rpre --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.ladder.M512.jsonl --drafter <dspark> --order 1 \
     --cond both --out runs/rpre/gsm8k.r1.jsonl --anchors 96 --paths 256 --split
-python -m specfloor.rpre_report --rpre 'runs/rpre/*.r0.jsonl' --order 0
-python -m specfloor.rpre_report --rpre 'runs/rpre/*.r1.jsonl' --order 1
+python -m specfloor.rpre_report --rpre 'runs/rpre/*.r0.jsonl'   # reads the order
+python -m specfloor.rpre_report --rpre 'runs/rpre/*.r1.jsonl'   # off the records
+
+# 9b. a second order-1 drafter against the first. Same corpus, anchor file and
+#     per-anchor seeds, so T^(0) and T^(1) coincide and every difference is the
+#     drafter's alone. rpre_compare refuses to run unless the anchor sets are
+#     identical, and bootstraps the DIFFERENCE over prompts.
+python -m specfloor.probe_rpre --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
+    --cheap runs/C0/gsm8k.ladder.M512.jsonl --drafter <other order-1 drafter> \
+    --order 1 --cond both --out runs/rpre_b/gsm8k.r1.jsonl --anchors 96 --paths 256 --split
+python -m specfloor.rpre_compare --a 'runs/rpre/*.r1.jsonl' --b 'runs/rpre_b/*.r1.jsonl' \
+    --label-a dspark --label-b other
 
 # 10. free-rollout law against the serving one. No new forward passes: probe_rpre
 #     already records a_k = min(1, q_k(Z_k)/p_k(Z_k)) per path per slot, whose
@@ -267,9 +286,13 @@ python -m specfloor.srv_report --rpre 'runs/rpre/*.r0.jsonl' --by-domain
 #     logprobs and top_logprobs=20 returns a free rollout AND p(.|X, Z_<k) at
 #     every slot, which is all a floor needs. Gaps are NOT measurable this way --
 #     no endpoint exposes the backbone tap a drafter reads.
-python -m specfloor.probe_api_floor --model deepseek-chat --domain gsm8k \
-    --out runs/api/gsm8k.api.jsonl --anchors 64 --paths 256 --gamma 7
-python -m specfloor.api_floor_report --api 'runs/api/*.api.jsonl'
+#     --prompts is a jsonl of {prompt_id, prompt, domain}; the archived cohorts'
+#     prompts are measurements/api_v4/prompts*.jsonl.gz. The key is read from
+#     MEASUREMENT_API_KEY and never written anywhere.
+python -m specfloor.probe_api_floor --api-base <url> --api-model <name> \
+    --prompts runs/api/prompts.jsonl --out runs/api/cohort1.jsonl \
+    --anchors 64 --paths 256 --gamma 7
+python -m specfloor.api_floor_report --in 'runs/api/cohort*.jsonl' --by-domain
 
 # 12. how much of the floor is a COMMITMENT cost. T^(0) is the best single blind
 #     proposal; the K-median is the best K of them with an oracle picking per
@@ -309,7 +332,7 @@ python -m specfloor.probe_tk --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.ladder.M512.jsonl --out runs/tk20/gsm8k.t01.tk20.jsonl \
     --anchors 96 --paths 256 --top-k 20 --rungs 0,1 --split
 python -m specfloor.topk_compare --narrow 'runs/tk20/*.t01.tk20.jsonl' \
-    --wide 'runs/t1/*.t01.m256.jsonl'
+    --wide 'runs/tk/*.t01.m256.jsonl'          # step 8 re-run at --paths 256
 
 # 16. the truncated sampling law. Everything above is at C0; C1 is the law the
 #     drafters' training data was generated at, and under it BOTH the trajectory
@@ -319,14 +342,49 @@ python -m specfloor.topk_compare --narrow 'runs/tk20/*.t01.tk20.jsonl' \
 python -m specfloor.probe_rpre --corpus C1 --corpus-file runs/C1/gsm8k.jsonl \
     --cheap runs/C1/gsm8k.ladder.M512.jsonl --drafter $DRAFT --order 0 \
     --cond both --out runs/rpre_c1/gsm8k.r0.jsonl --anchors 96 --paths 256 --split
-python -m specfloor.rpre_report --rpre 'runs/rpre_c1/*.r0.jsonl' --order 0
+python -m specfloor.rpre_report --rpre 'runs/rpre_c1/*.r0.jsonl'
 
 # 17. the log-loss companion, and the check that the ESS gate is not selecting
 #     the answer. Relaxing the gate nearly doubles the population described; if
 #     the number moved, the gate would be doing the work rather than the data.
 python -m specfloor.probe_rm --corpus C0 --corpus-file runs/C0/gsm8k.jsonl \
     --cheap runs/C0/gsm8k.cheap.jsonl --out runs/rm/gsm8k.rm.jsonl
-python -m specfloor.rm_compare --rm 'runs/rm/*.rm.jsonl' --ess 32 --by-domain
+python -m specfloor.mi_report --rm 'runs/rm/*.rm.jsonl' --screen 'runs/C0/*.cheap.jsonl'
+python -m specfloor.mi_report --rm 'runs/rm/*.rm.jsonl' --screen 'runs/C0/*.cheap.jsonl' --ess 32
+python -m specfloor.rm_compare --rm 'runs/rm/*.rm.jsonl' --ess 32   # conditional vs interventional
+
+# 18. a longer block. The floor probes take the block length from the
+#     environment and nothing else changes: same ladder, same seeds, so the
+#     first seven tokens of every path are the gamma=7 run's and slots 0-6 of the
+#     two runs are the same measurement. blocklen_report checks exactly that on
+#     the shared anchors -- a gap there means the two runs are not computing the
+#     same estimator. measurements/g16/run.sh is the archived invocation.
+SPECFLOOR_GAMMA=16 python -m specfloor.probe_tk --corpus C0 \
+    --corpus-file runs/C0/gsm8k.jsonl --cheap runs/C0/gsm8k.ladder.M512.jsonl \
+    --out runs/g16/gsm8k.g16.jsonl --anchors 96 --paths 1024 --top-k 256 --rungs 0,1 --split
+python -m specfloor.blocklen_report --tk 'runs/g16/*.g16.jsonl'
+```
+
+## From the archive: every number in the paper, no GPU
+
+Every report takes the gzipped records in `measurements/` directly, and with
+no arguments the newer ones read the archive by default.
+
+```bash
+python -m measurements.verify            # every archived number, beside the paper's
+python -m paper.figures                  # the measurement figures, into paper/figures/
+
+python -m specfloor.rpre_report --rpre 'measurements/rpre/*.rpre.jsonl.gz'          # Sec. 3.3, DFlash
+python -m specfloor.rpre_report --rpre 'measurements/rpre_o1/*.rpre1.jsonl.gz'      # Sec. 3.3, DSpark
+python -m specfloor.ratio_report                                                     # shares, Sec. 4
+python -m specfloor.mi_report                                                        # Sec. 3.2
+python -m specfloor.concentration_report                                             # Sec. 3.1
+python -m specfloor.srv_report --rpre 'measurements/srv/*.srv0.jsonl.gz'            # Sec. 5
+python -m specfloor.br_report --br 'measurements/br/*.br0.jsonl.gz' --by-domain     # Sec. 5
+python -m specfloor.br_iter --br 'measurements/br/*.br0.jsonl.gz'                   # App.
+python -m specfloor.rpre_compare --a 'measurements/rpre_o1/*.rpre1.jsonl.gz' \
+    --b 'measurements/rpre_o1_ours/*.rpre1.jsonl.gz' --label-a dspark --label-b ours # Sec. 6
+python -m specfloor.blocklen_report                                                  # App.
 ```
 
 ### Two things about the API step that are easy to get wrong
@@ -363,7 +421,7 @@ a length-dependent loss rather than a random one.
 
 ## Not covered here
 
-Part III/IV serving quantities (`q₂`, `conf`, `α`, rescue, `j*`, hit@1, speedup)
-run against a live server, not this offline path. They belong on **C1 only** —
+Serving quantities measured against a live server -- accepted length,
+throughput, speedup -- are not part of this offline path. They belong on **C1 only** —
 C2 is thinking-on and the drafter was trained thinking-off, so any drafter
 quantity measured there tests transfer, not context depth.
