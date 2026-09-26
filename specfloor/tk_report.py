@@ -45,6 +45,7 @@ import os
 import random
 
 from specfloor import config as C
+from specfloor.records import open_text
 
 
 def load(pattern):
@@ -54,7 +55,7 @@ def load(pattern):
     by, bad = {}, {}
     for f in sorted(glob.glob(pattern)):
         dom = os.path.basename(f).split(".")[0]
-        for line in open(f):
+        for line in open_text(f):
             line = line.strip()
             if not line:
                 continue

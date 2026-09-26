@@ -46,7 +46,7 @@ def select_informative(cheap, budget, slot, seed=C.SEED,
 
     Note the threshold: eps_R (0.05), not eps_info (0.01). R_m is a normalised
     ratio and a near-zero denominator makes it meaningless, so anchors between
-    the two thresholds are informative for Part I but cannot support a stable
+    the two thresholds are informative for the incidence and tail statistics but cannot support a stable
     ratio. Selecting them anyway is how the pilot spent 54% of the expensive
     pass producing `None`.
     """
@@ -186,7 +186,7 @@ def main() -> None:
     chosen, taken = select_informative(cheap, args.budget, args.slot)
     n_info = sum(1 for r in cheap if r["dCE"][args.slot] > C.INFORMATIVE_THRESHOLD)
     n_elig = sum(1 for r in cheap if r["dCE"][args.slot] > C.RM_ELIGIBILITY_THRESHOLD)
-    print(f"anchors informative for Part I (dCE > {C.INFORMATIVE_THRESHOLD}): "
+    print(f"anchors informative        (dCE > {C.INFORMATIVE_THRESHOLD}): "
           f"{n_info} / {len(cheap)}")
     print(f"anchors ELIGIBLE for R_m    (dCE > {C.RM_ELIGIBILITY_THRESHOLD}): "
           f"{n_elig} / {len(cheap)}   <-- the expensive pass runs on these only")
@@ -227,7 +227,7 @@ def main() -> None:
             # are chosen because their dCE estimate came out high, and that same
             # upward-biased estimate would then sit in the ratio. Worse, CE_B
             # appears in BOTH numerator and denominator, so an error d moves
-            # R = (N+d)/(D+d) toward 1 -- straight toward the H2 conclusion.
+            # R = (N+d)/(D+d) toward 1 -- straight toward the locality conclusion.
             sb = anchor_seed(a["prompt_id"], a["t"],
                              C.SEED ^ C.RM_RESCORE_SEED_OFFSET)
             drawn, _ = sample_paths(eng, prefix, args.mixed_paths, policy, K,

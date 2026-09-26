@@ -25,6 +25,8 @@ import glob
 import json
 import random
 
+from specfloor.records import open_text
+
 GATE = 1e-3
 
 
@@ -32,7 +34,7 @@ def load(pattern):
     out = {}
     for f in glob.glob(pattern):
         dom = f.split("/")[-1].split(".")[0]
-        for line in open(f):
+        for line in open_text(f):
             r = json.loads(line)
             out[(dom, r["prompt_id"], r["t"])] = r
     return out

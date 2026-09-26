@@ -11,3 +11,6 @@ dist/
 runs/
 *.jsonl
 *.log
+
+# Output of python -m paper.figures; regenerated from measurements/.
+paper/figures/

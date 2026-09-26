@@ -154,7 +154,7 @@ RM_MIXED_PATHS = 24
 # Sample splitting: the R_m pass re-draws its own paths rather than reusing the
 # cheap pass's CE_B. Selecting on an estimate and then putting that SAME estimate
 # in the ratio is selection-on-noise, and because CE_B appears in BOTH numerator
-# and denominator the induced bias drives R_m toward 1 -- i.e. toward the H2
+# and denominator the induced bias drives R_m toward 1 -- i.e. toward the locality
 # conclusion. The offset makes the redraw independent of the selection.
 RM_RESCORE_SEED_OFFSET = 0x5F3759DF
 

@@ -32,7 +32,7 @@ not an approximation to it.
 scalars per path per slot -- the target's probability at the realised token, and the drafter's -- so
 this probe stores those and nothing else. The full $[M, V]$ simplex that forces `probe_rpre` down to
 $M = 256$ is never materialised, which is why this runs at $M = 1024$: the objective is weighted by
-$c = S_k F_k$, survival concentrates (§5.8 measures the concentration), and the effective sample size
+$c = S_k F_k$, survival concentrates (br_report prints its ESS), and the effective sample size
 behind the fit is far below $M$ at deep slots.
 
 The water filling, the cross-fitting and every choice of split live in `br_report`, so a different

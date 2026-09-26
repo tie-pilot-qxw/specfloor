@@ -14,6 +14,7 @@ license = { text = "MIT" }
 # runs on these. The heavy pieces are optional because the measurement itself
 # splits that way: a floor needs the target alone, a gap needs a drafter.
 dependencies = [
+    "numpy",
     "torch>=2.1",
     "transformers>=4.40",
 ]
@@ -26,6 +27,8 @@ serve = ["sglang>=0.4"]
 # PyPI. Install it from source and point SPECFLOOR_DEEPSPEC at the checkout;
 # see specfloor/_deepspec.py.
 dev = ["pytest"]
+# Drawing the paper's measurement figures from the archive (python -m paper.figures).
+paper = ["matplotlib"]
 
 [tool.setuptools.packages.find]
 include = ["specfloor*"]

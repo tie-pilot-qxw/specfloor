@@ -41,6 +41,7 @@ import json
 import re
 
 from specfloor import config as C
+from specfloor.records import open_text
 from specfloor.stats import (fmt, hierarchical_bootstrap, n_clusters,
                                native_weights, wmean)
 
@@ -63,7 +64,7 @@ def load_arms(patterns):
         if not matched:
             raise SystemExit(f"pattern matched no files: {pat}")
         for path in matched:
-            recs = [json.loads(l) for l in open(path) if l.strip()]
+            recs = [json.loads(l) for l in open_text(path) if l.strip()]
             if not recs:
                 # An empty arm means a crashed run, not an absent one. Skipping
                 # it silently would drop an arm from the ladder and still print

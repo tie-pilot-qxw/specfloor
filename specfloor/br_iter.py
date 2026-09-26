@@ -1,6 +1,6 @@
 r"""Iterated best response: sweep the slots, refitting each against the others.
 
-  python -m specfloor.br_iter --br 'measurement_runs/br/*.br0.jsonl' --rounds 4
+  python -m specfloor.br_iter --br 'measurements/br/*.br0.jsonl.gz'
 
 **What this adds to br_report.** `br_report` reopens ONE slot and holds the other
 six at the shipped proposal, so its seven columns are seven separate deviations
@@ -16,7 +16,7 @@ every round is therefore computable from the files already on disk -- which is
 the whole reason that probe stores scalars instead of [M, V] rows.
 
 **What converges, and to what.** Each coordinate update is the exact maximiser of
-tau in that coordinate (br_report's water filling, appendix A.7), so tau on the
+tau in that coordinate (br_report's water filling; paper App. "Single-slot oracle objective"), so tau on the
 FIT half is non-decreasing along the sweep and bounded above by gamma + 1. It
 converges. What it converges to is a coordinate-wise fixed point -- no single
 slot can improve alone -- which is a Nash point of the deviation game, NOT the
@@ -25,7 +25,7 @@ in a different order can land somewhere else. Both sweep orders are reported for
 that reason, and the gap between them is a lower bound on how non-concave the
 joint problem is here.
 
-    tau_base  <=  max_k tau(single deviation at k)     <-- br_report, 5.11
+    tau_base  <=  max_k tau(single deviation at k)     <-- br_report
               <=  tau(coordinate-wise fixed point)     <-- HERE
               <=  tau*  (jointly optimal prefix-specific proposal)
 
@@ -145,10 +145,10 @@ def singles(fit, test, K, order, eps):
     """br_report's single-slot held-out dtau at EVERY slot, on this same fold.
 
     Returned per slot, never reduced per anchor. The reduction has to happen
-    after aggregation: max_k E[dtau_k] is the largest entry of the 5.11 table,
+    after aggregation: max_k E[dtau_k] is the largest entry of br_report's table,
     while E[max_k dtau_k] silently adds a second oracle that picks the slot per
     prefix, and on this data the two differ by a factor of three. Uses
-    br_report's own fit_slot/tau_of so that at eps=0 these ARE the 5.11 numbers.
+    br_report's own fit_slot/tau_of so that at eps=0 these ARE br_report's numbers.
     """
     base_test = tau_of(test, K)
     out = []
@@ -193,7 +193,9 @@ def anchor_traj(row, rounds, eps, forward):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--br", required=True)
-    ap.add_argument("--rounds", type=int, default=4)
+    # Eight, because the slowest case needs seven: DFlash's backward sweep is
+    # still climbing at round four (2.017) and settles at 2.066 from round seven.
+    ap.add_argument("--rounds", type=int, default=8)
     ap.add_argument("--eps", type=float, default=0.0)
     ap.add_argument("--boot", type=int, default=4000)
     ap.add_argument("--seed", type=int, default=20260818)
@@ -237,7 +239,7 @@ def main() -> None:
             per_slot.append(wmean([(c["v"], c["w"]) for c in cs]) if cs else float("nan"))
         best1 = max(v for v in per_slot if not math.isnan(v))
         sum1 = sum(v for v in per_slot if not math.isnan(v))
-        print("  single-slot reference (5.11, eps=0): " +
+        print("  single-slot reference (br_report, eps=0): " +
               " ".join(f"{v:.4f}" for v in per_slot))
         print(f"  best single slot max_k E[dtau_k] = {best1:.4f}   "
               f"naive sum sum_k E[dtau_k] = {sum1:.4f}")
@@ -274,8 +276,8 @@ def main() -> None:
     print("\nEach coordinate update is the exact maximiser of tau in that slot,")
     print("so the FIT half is monotone by construction and the printed check is")
     print("an arithmetic assertion, not a finding. The held-out column is the")
-    print("measurement. 'vs best1' is the ratio to the largest entry of the 5.11")
-    print("table, 'vs sum1' to the sum of all seven -- the sum 5.11 says may not")
+    print("measurement. 'vs best1' is the ratio to the largest entry of br_report's")
+    print("table, 'vs sum1' to the sum of all seven -- the sum br_report says may not")
     print("be taken, printed to show by how much it is wrong and which way.")
     print("Above 1.00x the deviations are COMPLEMENTARY: repairing one slot")
     print("raises what repairing another is worth, because reach is shared.")
@@ -286,7 +288,7 @@ def main() -> None:
     print("that tau is not jointly concave in the block proposal.")
     print("After a full sweep every slot is oracled per prefix, so this is an")
     print("upper bound on a whole-block prefix-specific oracle -- a wider one")
-    print("than 5.11's, and still not trainable headroom.")
+    print("than br_report's, and still not trainable headroom.")
 
 
 if __name__ == "__main__":

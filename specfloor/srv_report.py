@@ -38,12 +38,14 @@ import math
 import os
 import random
 
+from specfloor.records import open_text
+
 
 def load(pattern):
     by = {}
     for f in sorted(glob.glob(pattern)):
         dom = os.path.basename(f).split(".")[0]
-        for line in open(f):
+        for line in open_text(f):
             line = line.strip()
             if line:
                 by.setdefault(dom, []).append(json.loads(line))

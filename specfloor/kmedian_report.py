@@ -29,12 +29,14 @@ import math
 import os
 import random
 
+from specfloor.records import open_text
+
 
 def load(pattern):
     by = {}
     for f in sorted(glob.glob(pattern)):
         dom = os.path.basename(f).split(".")[0]
-        for line in open(f):
+        for line in open_text(f):
             line = line.strip()
             if line:
                 by.setdefault(dom, []).append(json.loads(line))
@@ -80,6 +82,37 @@ def boot(cs, key, B, seed):
     return q(0.025), q(0.975)
 
 
+def spread_summary(recs, widths):
+    """Restart spread over every (anchor, K > 1, slot) cell, weighted by 1/pi.
+
+    The per-cell means in the table hide the shape: most cells agree across
+    restarts exactly and a thin tail does not. Returned: the weighted share of
+    cells with zero spread, the weighted 90th percentile, the largest single
+    spread, and the largest per-(K, slot) weighted mean.
+    """
+    cells = []
+    for r in recs:
+        w = 1.0 / max(r.get("pi", 1.0), 1e-9)
+        for W in widths:
+            for k, s in ((r.get("spread") or {}).get(str(W)) or {}).items():
+                if s is not None:
+                    cells.append((s, w, W, k))
+    if not cells:
+        return None
+    tot = sum(c[1] for c in cells)
+    acc, p90 = 0.0, None
+    for s, w, _, _ in sorted(cells, key=lambda c: c[0]):
+        acc += w
+        if p90 is None and acc >= 0.9 * tot:
+            p90 = s
+    means = {}
+    for s, w, W, k in cells:
+        means.setdefault((W, k), []).append((s, w))
+    return dict(zero=sum(c[1] for c in cells if c[0] == 0) / tot, p90=p90,
+                max=max(c[0] for c in cells),
+                max_cell_mean=max(wmean(v) for v in means.values()))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--branch", required=True)
@@ -118,6 +151,12 @@ def main() -> None:
                 sp = g("sp")
                 print(f"  {k:>2} {len(cs):>4} | {T1:>8.4f} {TW:>9.4f} {gn:>8.4f} "
                       f"[{lo:>6.4f},{hi:>6.4f}] {1 - TW:>8.4f} {sp:>15.2e}")
+
+    sp = spread_summary(allr, widths)
+    if sp:
+        print(f"\nrestart spread over all K>1 cells: {sp['zero']:.0%} of the weight "
+              f"has zero spread, p90 {sp['p90']:.3f}, max {sp['max']:.2f}; the "
+              f"largest per-(K, slot) mean is {sp['max_cell_mean']:.3f}")
 
     print("\nT^(0),K is an UPPER bound on the true K-median, so the gain is a LOWER")
     print("bound on what K proposals remove. A large gain is a finding; a small one")

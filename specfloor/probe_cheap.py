@@ -1,4 +1,4 @@
-"""Cheap Part I probe: CE_A, CE_B, CE_commit, dCE -- with the frozen M ladder.
+"""Cheap probe: CE_A, CE_B, CE_commit, dCE -- with the frozen M ladder.
 
 Convention, stated once and applied everywhere:
   * ROLLOUT POLICY = THE CORPUS'S OWN POLICY, including where it STOPS. A path
