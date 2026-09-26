@@ -28,8 +28,8 @@ The rest of this page is about producing new measurements.
 |---|---|---|
 | Target | `Qwen/Qwen3-4B` | `1cfa9a7208912126459214e8b04321603b3df60c` |
 | DSpark baseline | `deepseek-ai/dspark_qwen3_4b_block7` | `3457dff1417cb84927f6098a5fcb7cee85c934b7` |
-| Ours (10 epochs, step 26160) | `TIE-Pilot/dspark-attnconv-block7-qwen3-4b` (repository root; `step_*/` hold the epoch checkpoints) | `6e97f0159b527322a95737417c0bf6cb96d39e74` |
-| One-epoch components | `TIE-Pilot/deepspec-drafter-ablations`, `<name>/step_2616` | `43549d81df38db655f4cae70a7f345bcc1cda486` |
+| Ours (10 epochs, step 26160) | `TIE-Pilot/dspark-attnconv-block7-qwen3-4b` (repository root; `step_*/` hold the epoch checkpoints) | `f1cc762e4666026bd6e17c195f53c33efd16326c` |
+| One-epoch components | `TIE-Pilot/deepspec-drafter-ablations`, `<name>/step_2616` | `ffa48e2c2fc7a017d4e5560d7384ff596c061712` |
 
 The served files are byte-identical to these: ours has `model.safetensors`
 SHA-256 `4effe8f1…` and `config.json` `751e42e3…`, as recorded in every sweep
