@@ -1,0 +1,125 @@
+{
+  "rows": [
+    {
+      "batch": 1,
+      "prefix_tokens": 512,
+      "official_ms": 1.1838719844818115,
+      "ours_ms": 1.0869919657707214,
+      "relative_time_change_percent": -8.183318803130145,
+      "official_proposal_ms": 1.2011200189590454,
+      "ours_proposal_ms": 1.1230239868164062
+    },
+    {
+      "batch": 1,
+      "prefix_tokens": 1024,
+      "official_ms": 1.1958400011062622,
+      "ours_ms": 1.1052800416946411,
+      "relative_time_change_percent": -7.572916052970702,
+      "official_proposal_ms": 1.2137279510498047,
+      "ours_proposal_ms": 1.141983985900879
+    },
+    {
+      "batch": 2,
+      "prefix_tokens": 512,
+      "official_ms": 1.232367992401123,
+      "ours_ms": 1.16348797082901,
+      "relative_time_change_percent": -5.589241362712483,
+      "official_proposal_ms": 1.2553120255470276,
+      "ours_proposal_ms": 1.2029119729995728
+    },
+    {
+      "batch": 2,
+      "prefix_tokens": 1024,
+      "official_ms": 1.260864019393921,
+      "ours_ms": 1.1896960139274597,
+      "relative_time_change_percent": -5.6443838805607776,
+      "official_proposal_ms": 1.2839199900627136,
+      "ours_proposal_ms": 1.2296960353851318
+    },
+    {
+      "batch": 4,
+      "prefix_tokens": 512,
+      "official_ms": 1.2964320182800293,
+      "ours_ms": 1.2598879933357239,
+      "relative_time_change_percent": -2.8188153662533133,
+      "official_proposal_ms": 1.318287968635559,
+      "ours_proposal_ms": 1.2995360493659973
+    },
+    {
+      "batch": 4,
+      "prefix_tokens": 1024,
+      "official_ms": 1.3193119764328003,
+      "ours_ms": 1.3028960227966309,
+      "relative_time_change_percent": -1.2442814079923314,
+      "official_proposal_ms": 1.3424479961395264,
+      "ours_proposal_ms": 1.3433279991149902
+    },
+    {
+      "batch": 8,
+      "prefix_tokens": 512,
+      "official_ms": 1.3762719631195068,
+      "ours_ms": 1.3216800093650818,
+      "relative_time_change_percent": -3.966654499789779,
+      "official_proposal_ms": 1.3990559577941895,
+      "ours_proposal_ms": 1.3615040183067322
+    },
+    {
+      "batch": 8,
+      "prefix_tokens": 1024,
+      "official_ms": 1.4123679995536804,
+      "ours_ms": 1.3533599972724915,
+      "relative_time_change_percent": -4.177948119741881,
+      "official_proposal_ms": 1.4363680481910706,
+      "ours_proposal_ms": 1.3938080072402954
+    },
+    {
+      "batch": 16,
+      "prefix_tokens": 512,
+      "official_ms": 1.544048011302948,
+      "ours_ms": 1.5271679759025574,
+      "relative_time_change_percent": -1.0932325469689474,
+      "official_proposal_ms": 1.5667359828948975,
+      "ours_proposal_ms": 1.5685120224952698
+    },
+    {
+      "batch": 16,
+      "prefix_tokens": 1024,
+      "official_ms": 1.6108320355415344,
+      "ours_ms": 1.559328019618988,
+      "relative_time_change_percent": -3.1973548319227163,
+      "official_proposal_ms": 1.6333600282669067,
+      "ours_proposal_ms": 1.6002240180969238
+    },
+    {
+      "batch": 32,
+      "prefix_tokens": 512,
+      "official_ms": 1.8827839493751526,
+      "ours_ms": 1.9177760481834412,
+      "relative_time_change_percent": 1.8585296958741004,
+      "official_proposal_ms": 1.9072800278663635,
+      "ours_proposal_ms": 1.9557920098304749
+    },
+    {
+      "batch": 32,
+      "prefix_tokens": 1024,
+      "official_ms": 2.0167839527130127,
+      "ours_ms": 2.0589919090270996,
+      "relative_time_change_percent": 2.092834795581755,
+      "official_proposal_ms": 2.0412639379501343,
+      "ours_proposal_ms": 2.097663998603821
+    }
+  ],
+  "source_sha256": {
+    "official.jsonl": "2ad267189cd05267450973b3eebdc7b7474062a175757fc6204838bd86fe137f",
+    "ours.jsonl": "b803411db4eff854eec1fb0847aa3dbe82a4c2a9f490c8b5fa0d0ae3a217b61c"
+  },
+  "statistic": "median of 64 within-state CUDA-event samples",
+  "unit": "ms per draft forward",
+  "independent_launches_per_arm": 1,
+  "exclusions": [
+    "target verification",
+    "commit_hidden",
+    "HTTP",
+    "prefill"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "arm": "ours",
+  "gpu": 6,
+  "started_unix": 1790061193.449379,
+  "updated_unix": 1790062991.5564694,
+  "state": "failed",
+  "error": "RuntimeError(\"TimeoutExpired(['nvidia-smi', '-i', '6', '--query-gpu=uuid,memory.used,utilization.gpu', '--format=csv,noheader,nounits'], 15)\")"
+}

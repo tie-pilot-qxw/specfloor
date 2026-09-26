@@ -1,0 +1,709 @@
+{
+  "serving_definition": "Within each task: total completion tokens / total client wall time; speedup divides by the no-speculation AR rate; macro is the mean over nine tasks.",
+  "timing_scope": "Sequential requests, including prefill and HTTP streaming overhead.",
+  "serving_runtime": {
+    "target": "Qwen/Qwen3-4B",
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "dtype": "bfloat16",
+    "request_concurrency": 1,
+    "speculative_slots": 7,
+    "ours": "optimized short convolution and precomputed attention-head projections; folded lattice enabled",
+    "git_revision": "8f51a8adf6db9e6aca844eb75028c1fcbaa47a2a",
+    "comparison_sources": {
+      "0": {
+        "official": "t0/official.jsonl.gz",
+        "optimized": "t0/ours.jsonl.gz"
+      },
+      "1": {
+        "official": "t1/official.jsonl.gz",
+        "optimized": "t1/ours.jsonl.gz"
+      }
+    },
+    "configs": {
+      "0/official": {
+        "command": [
+          "/workspace/sglang-eval-env/bin/python",
+          "-m",
+          "sglang.launch_server",
+          "--model-path",
+          "Qwen/Qwen3-4B",
+          "--mem-fraction-static",
+          "0.8",
+          "--dtype",
+          "bfloat16",
+          "--trust-remote-code",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "30316",
+          "--speculative-algorithm",
+          "DSPARK",
+          "--speculative-draft-model-path",
+          "/workspace/tmp/ckpt_official_dspark",
+          "--speculative-dspark-block-size",
+          "7",
+          "--speculative-num-draft-tokens",
+          "8"
+        ],
+        "env": {
+          "SGLANG_DSPARK_ATTN_PRECOMPUTE": "0",
+          "SGLANG_DFLASH_CONV_KERNEL": "0",
+          "SGLANG_DSPARK_FOLDED_LATTICE": "1",
+          "SGLANG_DFLASH_FUSE_CONV": "1"
+        },
+        "gpu": 6,
+        "cap_scale": 1.0,
+        "temperature": 0.0,
+        "max_tokens": 2048,
+        "seed": 980406,
+        "expected_requests": 3030,
+        "git_revision": "8f51a8adf6db9e6aca844eb75028c1fcbaa47a2a"
+      },
+      "0/optimized": {
+        "command": [
+          "/workspace/sglang-eval-env/bin/python",
+          "-m",
+          "sglang.launch_server",
+          "--model-path",
+          "Qwen/Qwen3-4B",
+          "--mem-fraction-static",
+          "0.8",
+          "--dtype",
+          "bfloat16",
+          "--trust-remote-code",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "30316",
+          "--speculative-algorithm",
+          "DSPARK",
+          "--speculative-draft-model-path",
+          "/workspace/checkpoints/deepspec/attnconv_b7_qwen3_4b_10ep/step_26160",
+          "--speculative-dspark-block-size",
+          "7",
+          "--speculative-num-draft-tokens",
+          "8"
+        ],
+        "env": {
+          "SGLANG_DSPARK_ATTN_PRECOMPUTE": "1",
+          "SGLANG_DFLASH_CONV_KERNEL": "2",
+          "SGLANG_DSPARK_FOLDED_LATTICE": "1",
+          "SGLANG_DFLASH_FUSE_CONV": "1"
+        },
+        "gpu": 6,
+        "cap_scale": 1.0,
+        "temperature": 0.0,
+        "max_tokens": 2048,
+        "seed": 980406,
+        "min_spec_tokens": 338000,
+        "expected_requests": 3030,
+        "git_revision": "8f51a8adf6db9e6aca844eb75028c1fcbaa47a2a"
+      },
+      "1/optimized": {
+        "command": [
+          "/workspace/sglang-eval-env/bin/python",
+          "-m",
+          "sglang.launch_server",
+          "--model-path",
+          "Qwen/Qwen3-4B",
+          "--mem-fraction-static",
+          "0.8",
+          "--dtype",
+          "bfloat16",
+          "--trust-remote-code",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "30317",
+          "--speculative-algorithm",
+          "DSPARK",
+          "--speculative-draft-model-path",
+          "/workspace/checkpoints/deepspec/attnconv_b7_qwen3_4b_10ep/step_26160",
+          "--speculative-dspark-block-size",
+          "7",
+          "--speculative-num-draft-tokens",
+          "8"
+        ],
+        "env": {
+          "SGLANG_DSPARK_ATTN_PRECOMPUTE": "1",
+          "SGLANG_DFLASH_CONV_KERNEL": "2",
+          "SGLANG_DSPARK_FOLDED_LATTICE": "1",
+          "SGLANG_DFLASH_FUSE_CONV": "1"
+        },
+        "gpu": 7,
+        "cap_scale": 1.0,
+        "temperature": 1.0,
+        "max_tokens": 2048,
+        "seed": 980406,
+        "expected_requests": 3030,
+        "git_revision": "8f51a8adf6db9e6aca844eb75028c1fcbaa47a2a"
+      }
+    }
+  },
+  "serving": {
+    "0": {
+      "official": {
+        "rows": 3030,
+        "prompt_clusters": 3029,
+        "output_hash_mismatches_vs_ar": 108,
+        "per_task": {
+          "gsm8k": {
+            "rows": 500,
+            "completion_tokens": 150061,
+            "verification_steps": 23620,
+            "wall_seconds": 139.99973344802856,
+            "tokens_per_second": 1071.8663264863033,
+            "accepted_length": 6.353132938187977,
+            "baseline_tokens_per_second": 237.8534922597418,
+            "speedup": 4.50641407995725
+          },
+          "math500": {
+            "rows": 500,
+            "completion_tokens": 397173,
+            "verification_steps": 62958,
+            "wall_seconds": 364.0110754966736,
+            "tokens_per_second": 1091.1014162359722,
+            "accepted_length": 6.308539026017345,
+            "baseline_tokens_per_second": 239.64518992718828,
+            "speedup": 4.552986924408885
+          },
+          "aime25": {
+            "rows": 30,
+            "completion_tokens": 54589,
+            "verification_steps": 9639,
+            "wall_seconds": 55.42811608314514,
+            "tokens_per_second": 984.8611834130097,
+            "accepted_length": 5.663346820209565,
+            "baseline_tokens_per_second": 240.1953651219061,
+            "speedup": 4.100250572750078
+          },
+          "humaneval": {
+            "rows": 164,
+            "completion_tokens": 71085,
+            "verification_steps": 12482,
+            "wall_seconds": 72.89222383499146,
+            "tokens_per_second": 975.2069049356687,
+            "accepted_length": 5.695000801153661,
+            "baseline_tokens_per_second": 240.37433409179832,
+            "speedup": 4.057034244609659
+          },
+          "mbpp": {
+            "rows": 256,
+            "completion_tokens": 85963,
+            "verification_steps": 15729,
+            "wall_seconds": 92.05117559432983,
+            "tokens_per_second": 933.860968585991,
+            "accepted_length": 5.4652552609828975,
+            "baseline_tokens_per_second": 239.8075637038376,
+            "speedup": 3.8942098162479546
+          },
+          "livecodebench": {
+            "rows": 500,
+            "completion_tokens": 164904,
+            "verification_steps": 29056,
+            "wall_seconds": 175.64214992523193,
+            "tokens_per_second": 938.8634793538852,
+            "accepted_length": 5.675385462555066,
+            "baseline_tokens_per_second": 224.83769854029984,
+            "speedup": 4.175738701513188
+          },
+          "mt-bench": {
+            "rows": 80,
+            "completion_tokens": 38256,
+            "verification_steps": 9948,
+            "wall_seconds": 57.30049252510071,
+            "tokens_per_second": 667.6382403387163,
+            "accepted_length": 3.8455971049457176,
+            "baseline_tokens_per_second": 239.75598361820116,
+            "speedup": 2.784657259699075
+          },
+          "alpaca": {
+            "rows": 500,
+            "completion_tokens": 181409,
+            "verification_steps": 48716,
+            "wall_seconds": 281.074524641037,
+            "tokens_per_second": 645.4124586056997,
+            "accepted_length": 3.7238073733475656,
+            "baseline_tokens_per_second": 238.58785766492267,
+            "speedup": 2.7051353950800348
+          },
+          "arena-hard-v2": {
+            "rows": 500,
+            "completion_tokens": 526289,
+            "verification_steps": 140149,
+            "wall_seconds": 807.0845701694489,
+            "tokens_per_second": 652.0865587722792,
+            "accepted_length": 3.7552105259402495,
+            "baseline_tokens_per_second": 236.0177528040514,
+            "speedup": 2.7628708053739492
+          }
+        },
+        "macro_accepted_length": 5.165030590371116,
+        "macro_speedup": 3.726588644404453
+      },
+      "optimized": {
+        "rows": 3030,
+        "prompt_clusters": 3029,
+        "output_hash_mismatches_vs_ar": 102,
+        "per_task": {
+          "gsm8k": {
+            "rows": 500,
+            "completion_tokens": 150061,
+            "verification_steps": 23005,
+            "wall_seconds": 136.0993492603302,
+            "tokens_per_second": 1102.5842578641873,
+            "accepted_length": 6.522973266681157,
+            "baseline_tokens_per_second": 237.8534922597418,
+            "speedup": 4.635560518321666
+          },
+          "math500": {
+            "rows": 500,
+            "completion_tokens": 396838,
+            "verification_steps": 61457,
+            "wall_seconds": 353.2465350627899,
+            "tokens_per_second": 1123.4023850494716,
+            "accepted_length": 6.4571651723969605,
+            "baseline_tokens_per_second": 239.64518992718828,
+            "speedup": 4.687773559697971
+          },
+          "aime25": {
+            "rows": 30,
+            "completion_tokens": 54497,
+            "verification_steps": 9256,
+            "wall_seconds": 52.8698673248291,
+            "tokens_per_second": 1030.7761823038802,
+            "accepted_length": 5.887748487467588,
+            "baseline_tokens_per_second": 240.1953651219061,
+            "speedup": 4.291407462341047
+          },
+          "humaneval": {
+            "rows": 164,
+            "completion_tokens": 71085,
+            "verification_steps": 12137,
+            "wall_seconds": 70.58834791183472,
+            "tokens_per_second": 1007.035893357153,
+            "accepted_length": 5.856883908708907,
+            "baseline_tokens_per_second": 240.37433409179832,
+            "speedup": 4.189448499824314
+          },
+          "mbpp": {
+            "rows": 256,
+            "completion_tokens": 85963,
+            "verification_steps": 15385,
+            "wall_seconds": 89.61489295959473,
+            "tokens_per_second": 959.249039540322,
+            "accepted_length": 5.587455313617159,
+            "baseline_tokens_per_second": 239.8075637038376,
+            "speedup": 4.000078332495779
+          },
+          "livecodebench": {
+            "rows": 500,
+            "completion_tokens": 164832,
+            "verification_steps": 28108,
+            "wall_seconds": 169.53022813796997,
+            "tokens_per_second": 972.2867821888001,
+            "accepted_length": 5.8642379393766895,
+            "baseline_tokens_per_second": 224.83769854029984,
+            "speedup": 4.324393945059564
+          },
+          "mt-bench": {
+            "rows": 80,
+            "completion_tokens": 38256,
+            "verification_steps": 9556,
+            "wall_seconds": 54.66674017906189,
+            "tokens_per_second": 699.8039369951781,
+            "accepted_length": 4.003348681456677,
+            "baseline_tokens_per_second": 239.75598361820116,
+            "speedup": 2.918817401068827
+          },
+          "alpaca": {
+            "rows": 500,
+            "completion_tokens": 181409,
+            "verification_steps": 47107,
+            "wall_seconds": 270.2904713153839,
+            "tokens_per_second": 671.1631346719802,
+            "accepted_length": 3.8509987899887492,
+            "baseline_tokens_per_second": 238.58785766492267,
+            "speedup": 2.813064928117903
+          },
+          "arena-hard-v2": {
+            "rows": 500,
+            "completion_tokens": 526319,
+            "verification_steps": 134888,
+            "wall_seconds": 771.2798845767975,
+            "tokens_per_second": 682.396897059998,
+            "accepted_length": 3.901896388114584,
+            "baseline_tokens_per_second": 236.0177528040514,
+            "speedup": 2.8912947816537473
+          }
+        },
+        "macro_accepted_length": 5.325856438645386,
+        "macro_speedup": 3.861315492064535
+      }
+    },
+    "1": {
+      "official": {
+        "rows": 3030,
+        "prompt_clusters": 3029,
+        "output_hash_mismatches_vs_ar": 2929,
+        "per_task": {
+          "gsm8k": {
+            "rows": 500,
+            "completion_tokens": 151203,
+            "verification_steps": 24616,
+            "wall_seconds": 149.74895238876343,
+            "tokens_per_second": 1009.7099017258012,
+            "accepted_length": 6.142468313292167,
+            "baseline_tokens_per_second": 237.70231283769394,
+            "speedup": 4.247791658700618
+          },
+          "math500": {
+            "rows": 500,
+            "completion_tokens": 386257,
+            "verification_steps": 67332,
+            "wall_seconds": 398.984397649765,
+            "tokens_per_second": 968.1005128903879,
+            "accepted_length": 5.7366036951226755,
+            "baseline_tokens_per_second": 237.07582011438575,
+            "speedup": 4.08350591141388
+          },
+          "aime25": {
+            "rows": 30,
+            "completion_tokens": 54593,
+            "verification_steps": 11167,
+            "wall_seconds": 65.83261752128601,
+            "tokens_per_second": 829.2697762222223,
+            "accepted_length": 4.888779439419719,
+            "baseline_tokens_per_second": 235.9770879265185,
+            "speedup": 3.5141961599274025
+          },
+          "humaneval": {
+            "rows": 164,
+            "completion_tokens": 70118,
+            "verification_steps": 12922,
+            "wall_seconds": 77.38809967041016,
+            "tokens_per_second": 906.056619798484,
+            "accepted_length": 5.426249806531497,
+            "baseline_tokens_per_second": 237.27590000069955,
+            "speedup": 3.818578371405662
+          },
+          "mbpp": {
+            "rows": 256,
+            "completion_tokens": 83108,
+            "verification_steps": 16115,
+            "wall_seconds": 96.61691808700562,
+            "tokens_per_second": 860.180614798326,
+            "accepted_length": 5.157182748991623,
+            "baseline_tokens_per_second": 238.25152151825716,
+            "speedup": 3.6103887577163305
+          },
+          "livecodebench": {
+            "rows": 500,
+            "completion_tokens": 138903,
+            "verification_steps": 27989,
+            "wall_seconds": 174.08128666877747,
+            "tokens_per_second": 797.9203431801903,
+            "accepted_length": 4.962771088641967,
+            "baseline_tokens_per_second": 233.6402474426786,
+            "speedup": 3.4151664874261547
+          },
+          "mt-bench": {
+            "rows": 80,
+            "completion_tokens": 37141,
+            "verification_steps": 10372,
+            "wall_seconds": 61.33497977256775,
+            "tokens_per_second": 605.5435273268228,
+            "accepted_length": 3.580890860007713,
+            "baseline_tokens_per_second": 237.73401532027734,
+            "speedup": 2.547147182581463
+          },
+          "alpaca": {
+            "rows": 500,
+            "completion_tokens": 182182,
+            "verification_steps": 51319,
+            "wall_seconds": 303.9875054359436,
+            "tokens_per_second": 599.3075265996072,
+            "accepted_length": 3.5499912313178354,
+            "baseline_tokens_per_second": 237.81398923518555,
+            "speedup": 2.520068430486331
+          },
+          "arena-hard-v2": {
+            "rows": 500,
+            "completion_tokens": 518860,
+            "verification_steps": 157775,
+            "wall_seconds": 933.4228191375732,
+            "tokens_per_second": 555.8681332425487,
+            "accepted_length": 3.288607193788623,
+            "baseline_tokens_per_second": 235.7496064915437,
+            "speedup": 2.3578751265592786
+          }
+        },
+        "macro_accepted_length": 4.748171597457091,
+        "macro_speedup": 3.346079787357458
+      },
+      "optimized": {
+        "rows": 3030,
+        "prompt_clusters": 3029,
+        "output_hash_mismatches_vs_ar": 2917,
+        "per_task": {
+          "gsm8k": {
+            "rows": 500,
+            "completion_tokens": 153860,
+            "verification_steps": 24529,
+            "wall_seconds": 148.29929065704346,
+            "tokens_per_second": 1037.4965336538003,
+            "accepted_length": 6.272575319010151,
+            "baseline_tokens_per_second": 237.70231283769394,
+            "speedup": 4.364688425906127
+          },
+          "math500": {
+            "rows": 500,
+            "completion_tokens": 395929,
+            "verification_steps": 67287,
+            "wall_seconds": 396.5068476200104,
+            "tokens_per_second": 998.5426541219178,
+            "accepted_length": 5.884182680161101,
+            "baseline_tokens_per_second": 237.07582011438575,
+            "speedup": 4.211912685317866
+          },
+          "aime25": {
+            "rows": 30,
+            "completion_tokens": 56167,
+            "verification_steps": 11112,
+            "wall_seconds": 65.16221570968628,
+            "tokens_per_second": 861.9565708176318,
+            "accepted_length": 5.054625629949604,
+            "baseline_tokens_per_second": 235.9770879265185,
+            "speedup": 3.652712974769986
+          },
+          "humaneval": {
+            "rows": 164,
+            "completion_tokens": 71311,
+            "verification_steps": 12756,
+            "wall_seconds": 76.02774167060852,
+            "tokens_per_second": 937.9602554677491,
+            "accepted_length": 5.590388836625902,
+            "baseline_tokens_per_second": 237.27590000069955,
+            "speedup": 3.9530363406691693
+          },
+          "mbpp": {
+            "rows": 256,
+            "completion_tokens": 84222,
+            "verification_steps": 15778,
+            "wall_seconds": 94.3067238330841,
+            "tokens_per_second": 893.064636081163,
+            "accepted_length": 5.3379389022689825,
+            "baseline_tokens_per_second": 238.25152151825716,
+            "speedup": 3.74841105059943
+          },
+          "livecodebench": {
+            "rows": 500,
+            "completion_tokens": 141337,
+            "verification_steps": 27110,
+            "wall_seconds": 168.18078112602234,
+            "tokens_per_second": 840.3873442239064,
+            "accepted_length": 5.213463666543711,
+            "baseline_tokens_per_second": 233.6402474426786,
+            "speedup": 3.596928840053927
+          },
+          "mt-bench": {
+            "rows": 80,
+            "completion_tokens": 36317,
+            "verification_steps": 9634,
+            "wall_seconds": 56.705668687820435,
+            "tokens_per_second": 640.4474339229575,
+            "accepted_length": 3.769669919036745,
+            "baseline_tokens_per_second": 237.73401532027734,
+            "speedup": 2.6939663348559573
+          },
+          "alpaca": {
+            "rows": 500,
+            "completion_tokens": 178128,
+            "verification_steps": 48367,
+            "wall_seconds": 285.59098982810974,
+            "tokens_per_second": 623.7171561582209,
+            "accepted_length": 3.6828416068807246,
+            "baseline_tokens_per_second": 237.81398923518555,
+            "speedup": 2.622710119636391
+          },
+          "arena-hard-v2": {
+            "rows": 500,
+            "completion_tokens": 516134,
+            "verification_steps": 150427,
+            "wall_seconds": 884.6845846176147,
+            "tokens_per_second": 583.4101881893731,
+            "accepted_length": 3.431126061145938,
+            "baseline_tokens_per_second": 235.7496064915437,
+            "speedup": 2.4747027020395045
+          }
+        },
+        "macro_accepted_length": 4.91520140240254,
+        "macro_speedup": 3.4798966082053733
+      }
+    }
+  },
+  "acceptance": {
+    "0": {
+      "source_files": [
+        "t0/official.jsonl.gz",
+        "t0/ours.jsonl.gz"
+      ],
+      "dspark": {
+        "n_records": 3030,
+        "per_task": {
+          "gsm8k": 6.353132938187977,
+          "math500": 6.308539026017345,
+          "aime25": 5.663346820209565,
+          "humaneval": 5.695000801153661,
+          "mbpp": 5.4652552609828975,
+          "livecodebench": 5.675385462555066,
+          "mt-bench": 3.8455971049457176,
+          "alpaca": 3.7238073733475656,
+          "arena-hard-v2": 3.7552105259402495
+        },
+        "macro": 5.165030590371116
+      },
+      "ours": {
+        "n_records": 3030,
+        "per_task": {
+          "gsm8k": 6.522973266681157,
+          "math500": 6.4571651723969605,
+          "aime25": 5.887748487467588,
+          "humaneval": 5.856883908708907,
+          "mbpp": 5.587455313617159,
+          "livecodebench": 5.8642379393766895,
+          "mt-bench": 4.003348681456677,
+          "alpaca": 3.8509987899887492,
+          "arena-hard-v2": 3.901896388114584
+        },
+        "macro": 5.325856438645386
+      },
+      "gain_percent": 3.1137443517583074
+    },
+    "1": {
+      "source_files": {
+        "official": [
+          "t1_acceptance/official_r1.jsonl.gz",
+          "t1_acceptance/official_r2.jsonl.gz",
+          "t1_acceptance/official_r3.jsonl.gz"
+        ],
+        "ours": [
+          "t1_acceptance/ours_r1.jsonl.gz",
+          "t1_acceptance/ours_r2.jsonl.gz",
+          "t1_acceptance/ours_r3.jsonl.gz"
+        ]
+      },
+      "dspark": {
+        "n_records": 3030,
+        "n_launches": 3,
+        "per_task": {
+          "gsm8k": 6.109795513574472,
+          "math500": 5.729998337829785,
+          "aime25": 4.926553370632779,
+          "humaneval": 5.449010901020994,
+          "mbpp": 5.118768926921752,
+          "livecodebench": 4.920017715431597,
+          "mt-bench": 3.6578144858606834,
+          "alpaca": 3.561645532696199,
+          "arena-hard-v2": 3.286055359939263
+        },
+        "macro": 4.751073349323058,
+        "macro_sd_across_launches": 0.009235253392242088,
+        "macro_sem_across_launches": 0.005331976032045375,
+        "run_macros": [
+          4.761605262389797,
+          4.747256189043447,
+          4.74435859653593
+        ]
+      },
+      "ours": {
+        "n_records": 3030,
+        "n_launches": 3,
+        "per_task": {
+          "gsm8k": 6.3223031747305,
+          "math500": 5.907588060548385,
+          "aime25": 5.0825786388049226,
+          "humaneval": 5.611992664459437,
+          "mbpp": 5.323304443905499,
+          "livecodebench": 5.163853556164611,
+          "mt-bench": 3.8095748051420926,
+          "alpaca": 3.7315410074464186,
+          "arena-hard-v2": 3.4430805023918687
+        },
+        "macro": 4.932868539288194,
+        "macro_sd_across_launches": 0.013949283922095455,
+        "macro_sem_across_launches": 0.00805362282742433,
+        "run_macros": [
+          4.925954408760361,
+          4.923726849803234,
+          4.948924359300984
+        ]
+      },
+      "gain_percent": 3.8264025115722022,
+      "gain_sem_percentage_points": 0.2056972203453639,
+      "uncertainty": "Across-launch SD for each arm; first-order propagated 1 SEM for the ratio."
+    }
+  },
+  "source_files": {
+    "ar/t0.jsonl.gz": {
+      "sha256": "14c5556eb645c9672f35657d1cc5011020be11fedbb87b2e457a35034565cb5f",
+      "bytes": 847468
+    },
+    "t0/official.jsonl.gz": {
+      "sha256": "c843eb55f84d3f3be9fbcbfaf113dd0894425fc0cdba242ce1e094a56480fd1c",
+      "bytes": 844857
+    },
+    "t0/ours.jsonl.gz": {
+      "sha256": "b53e987fb0c4ca65053e3660f7208ea37fa427afe7b6e295d8b176fd345447b9",
+      "bytes": 844605
+    },
+    "ar/t1.jsonl.gz": {
+      "sha256": "067c799a4dac5adfc76029fd32d46df79eebdb89fb4e251aa7c7fb806f34dfd2",
+      "bytes": 848362
+    },
+    "t1/official.jsonl.gz": {
+      "sha256": "ec94621c79f8ac29e004d0adae95235df6d86b98f95196a23aaad9a371c399e9",
+      "bytes": 844839
+    },
+    "t1/ours.jsonl.gz": {
+      "sha256": "dc31d45fde77b4ac2ed30604e2547f31c09bd6a74b37f0cd96afa35f26bed991",
+      "bytes": 844547
+    },
+    "t0/official_config.json": {
+      "sha256": "e6f555e21d6a035cc31ab36fb43354eefd5343de19a659a492baee595b2c7b1e",
+      "bytes": 879
+    },
+    "t0/ours_config.json": {
+      "sha256": "cd02c8e51862f5eaac87b74ee8e465feb34916f3bd86f13d986b686b2021850f",
+      "bytes": 941
+    },
+    "t1/ours_config.json": {
+      "sha256": "c21622157b3417921b6f59fd46183a66509f600fa80d22c004d7c4c5218cea39",
+      "bytes": 912
+    },
+    "t1_acceptance/official_r1.jsonl.gz": {
+      "sha256": "c10b9796afdbc144ce4e1724c489f0d0812debd8f87683f7dba03de05a9b4c59",
+      "bytes": 899992
+    },
+    "t1_acceptance/official_r2.jsonl.gz": {
+      "sha256": "ecb46a40420feac02328d487f8cb97dab9c62aed8e00b22a01bc321ab04c2a74",
+      "bytes": 900210
+    },
+    "t1_acceptance/official_r3.jsonl.gz": {
+      "sha256": "c7daceee54677a2920f40a8e0d82ead1af6605dc7a076292c0eea838b3f1508c",
+      "bytes": 900256
+    },
+    "t1_acceptance/ours_r1.jsonl.gz": {
+      "sha256": "6fb4d2ca51b181e44c10e3cf424bad5f306800dca545bc1c02c242bc7e09cc6d",
+      "bytes": 899980
+    },
+    "t1_acceptance/ours_r2.jsonl.gz": {
+      "sha256": "955421c5f92fcd7fbc0776ca7b5a91c64a4e75718557bc0f0a4ec0dad22be9bb",
+      "bytes": 900106
+    },
+    "t1_acceptance/ours_r3.jsonl.gz": {
+      "sha256": "3d01db64e0963e7de458c54aebf97c86378c80f1261e269ab5d505857cb149af",
+      "bytes": 900174
+    }
+  }
+}

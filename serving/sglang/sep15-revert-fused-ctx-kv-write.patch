@@ -1,0 +1,422 @@
+diff --git a/python/sglang/kernels/ops/speculative/dspark/fused_ctx_kv_write.py b/python/sglang/kernels/ops/speculative/dspark/fused_ctx_kv_write.py
+deleted file mode 100644
+index f7f8575ac4..0000000000
+--- a/python/sglang/kernels/ops/speculative/dspark/fused_ctx_kv_write.py
++++ /dev/null
+@@ -1,108 +0,0 @@
+-# Added relative to sgl-project/sglang@702de2631 for DSpark prefix-attention drafter serving (specfloor, serving/sglang).
+-from typing import Optional
+-
+-import torch
+-import triton
+-import triton.language as tl
+-
+-
+-@triton.jit
+-def _fused_ctx_kv_norm_write_kernel(
+-    kv_ptr,
+-    knw_ptr,
+-    loc_ptr,
+-    commit_lens_ptr,
+-    k_cache_ptr,
+-    v_cache_ptr,
+-    locs_row_width,
+-    KV: tl.constexpr,
+-    D: tl.constexpr,
+-    NH: tl.constexpr,
+-    EPS: tl.constexpr,
+-    HAS_COMMIT_LENS: tl.constexpr,
+-):
+-    t = tl.program_id(0).to(tl.int64)
+-    if HAS_COMMIT_LENS:
+-        row_b = t // locs_row_width
+-        col = t - row_b * locs_row_width
+-        num_commit = tl.load(commit_lens_ptr + row_b).to(tl.int64)
+-        if col >= num_commit:
+-            return
+-    loc = tl.load(loc_ptr + t).to(tl.int64)
+-    if loc < 0:
+-        return
+-
+-    d_ar = tl.arange(0, D)
+-    # One k_norm for the whole head, unlike the per-layer backbone write.
+-    knw = tl.load(knw_ptr + d_ar).to(tl.float32)
+-    row = kv_ptr + t * (2 * KV)
+-    for h in tl.static_range(NH):
+-        k = tl.load(row + h * D + d_ar).to(tl.float32)
+-        ms = tl.sum(k * k, 0) / D
+-        inv = 1.0 / tl.sqrt(ms + EPS)
+-        tl.store(k_cache_ptr + loc * KV + h * D + d_ar, (k * inv * knw).to(tl.bfloat16))
+-        v = tl.load(row + KV + h * D + d_ar)
+-        tl.store(v_cache_ptr + loc * KV + h * D + d_ar, v)
+-
+-
+-def fused_ctx_kv_norm_write(
+-    *,
+-    kv: torch.Tensor,
+-    k_norm_weight: torch.Tensor,
+-    locs: torch.Tensor,
+-    k_cache: torch.Tensor,
+-    v_cache: torch.Tensor,
+-    num_heads: int,
+-    head_dim: int,
+-    eps: float,
+-    commit_lens: Optional[torch.Tensor] = None,
+-    locs_row_width: Optional[int] = None,
+-) -> None:
+-    """Write normed K and raw V rows into the AttnHead's own context cache.
+-
+-    The head's cache is a pool of its own, num_heads wide where a drafter layer's
+-    slot is num_key_value_heads wide, so it cannot ride along in the backbone's
+-    per-layer write; this is that write's single-layer, no-RoPE twin.  No RoPE
+-    because the head applies none -- keys come from target hidden states that
+-    already carry position, and the training-side head has no rotary either.
+-
+-    Rows with loc < 0 are skipped.  When commit_lens is given, locs is the
+-    flattened [bs, locs_row_width] verify window and only the first
+-    commit_lens[b] columns of each row are written -- the in-kernel replacement
+-    for building a boolean mask on the host and steering rejected rows to a
+-    dummy slot.
+-    """
+-    T = kv.shape[0]
+-    if T == 0:
+-        return
+-    has_commit_lens = commit_lens is not None
+-    if has_commit_lens != (locs_row_width is not None):
+-        raise ValueError(
+-            "commit_lens and locs_row_width must be passed together, got "
+-            f"commit_lens={'set' if has_commit_lens else None}, "
+-            f"locs_row_width={locs_row_width}."
+-        )
+-    if has_commit_lens:
+-        if commit_lens.numel() * locs_row_width != locs.numel():
+-            raise ValueError(
+-                f"locs must be a flattened [{commit_lens.numel()}, "
+-                f"{locs_row_width}] window, got numel={locs.numel()}."
+-            )
+-        commit_lens_arg = commit_lens.contiguous()
+-    else:
+-        locs_row_width = 1
+-        commit_lens_arg = locs
+-    _fused_ctx_kv_norm_write_kernel[(T,)](
+-        kv,
+-        k_norm_weight,
+-        locs.to(torch.int64).contiguous(),
+-        commit_lens_arg,
+-        k_cache,
+-        v_cache,
+-        locs_row_width,
+-        KV=num_heads * head_dim,
+-        D=head_dim,
+-        NH=num_heads,
+-        EPS=eps,
+-        HAS_COMMIT_LENS=has_commit_lens,
+-    )
+diff --git a/python/sglang/srt/models/dspark.py b/python/sglang/srt/models/dspark.py
+index 2b098ec16e..3a46285c73 100644
+--- a/python/sglang/srt/models/dspark.py
++++ b/python/sglang/srt/models/dspark.py
+@@ -487,7 +487,6 @@ class AttnHead(nn.Module):
+         self.register_buffer("_projected_embedding", None, persistent=False)
+         self.register_buffer("_state_projection_weight", None, persistent=False)
+         self.register_buffer("_gate_up_weight", None, persistent=False)
+-        self.register_buffer("_ctx_kv_weight", None, persistent=False)
+ 
+     def set_embedding_source(self, embed: nn.Module) -> None:
+         """Borrow the target's embedding BY REFERENCE, kept out of _modules so it is
+@@ -503,6 +502,15 @@ class AttnHead(nn.Module):
+         FP32 partials preserve the single output rounding of the original GEMM.
+         Reuse existing storage on reload so captured graph pointers remain valid.
+         """
++        weight = self.in_proj.weight
++        if (
++            not envs.SGLANG_DSPARK_ATTN_PRECOMPUTE.get()
++            or weight.device.type != "cuda"
++            or weight.dtype not in (torch.bfloat16, torch.float16)
++            or self._embed_tokens is None
++        ):
++            return
++
+         def update_buffer(name, value):
+             old = getattr(self, name)
+             if (
+@@ -515,23 +523,6 @@ class AttnHead(nn.Module):
+             else:
+                 setattr(self, name, value)
+ 
+-        # Not gated on SGLANG_DSPARK_ATTN_PRECOMPUTE: that flag is about the token
+-        # table, this concatenation only makes the context write's two projections
+-        # one GEMM.
+-        if self.k_proj.weight.dtype == self.v_proj.weight.dtype:
+-            update_buffer(
+-                "_ctx_kv_weight", torch.cat([self.k_proj.weight, self.v_proj.weight])
+-            )
+-
+-        weight = self.in_proj.weight
+-        if (
+-            not envs.SGLANG_DSPARK_ATTN_PRECOMPUTE.get()
+-            or weight.device.type != "cuda"
+-            or weight.dtype not in (torch.bfloat16, torch.float16)
+-            or self._embed_tokens is None
+-        ):
+-            return
+-
+         shape = (self.vocab_size, self.markov_rank)
+         if (
+             self._projected_embedding is None
+@@ -682,73 +673,13 @@ class AttnHead(nn.Module):
+                 self, "_value_cache", torch.zeros(shape, device=device, dtype=dtype)
+             )
+ 
+-    def _fused_ctx_kv_supported(self, ctx_hidden: torch.Tensor) -> bool:
+-        w = self._ctx_kv_weight
+-        tail = (1, self.num_heads, self.head_dim)
+-        return (
+-            w is not None
+-            and w.dtype == torch.bfloat16
+-            and ctx_hidden.dtype == torch.bfloat16
+-            and ctx_hidden.device.type == "cuda"
+-            and self._key_cache.dtype == torch.bfloat16
+-            and self._value_cache.dtype == torch.bfloat16
+-            and self._key_cache.is_contiguous()
+-            and self._value_cache.is_contiguous()
+-            and tuple(self._key_cache.shape[1:]) == tail
+-            and tuple(self._value_cache.shape[1:]) == tail
+-            and self.k_norm.weight.numel() == self.head_dim
+-        )
+-
+     def write_context_kv(
+-        self,
+-        *,
+-        ctx_hidden: torch.Tensor,
+-        cache_loc: torch.Tensor,
+-        commit_lens: Optional[torch.Tensor] = None,
+-        locs_row_width: Optional[int] = None,
++        self, *, ctx_hidden: torch.Tensor, cache_loc: torch.Tensor
+     ) -> None:
+-        """Write this head's prefix K/V for the rows `commit_lens` accepts.
+-
+-        `cache_loc` is the flattened [bs, locs_row_width] verify window when
+-        commit_lens is given, and one slot per token otherwise.
+-        """
+         if self._key_cache is None:
+             raise RuntimeError("AttnHead context cache was never allocated.")
+-        if self._fused_ctx_kv_supported(ctx_hidden):
+-            from sglang.kernels.ops.speculative.dspark.fused_ctx_kv_write import (
+-                fused_ctx_kv_norm_write,
+-            )
+-
+-            fused_ctx_kv_norm_write(
+-                kv=F.linear(self.ctx_norm(ctx_hidden), self._ctx_kv_weight),
+-                k_norm_weight=self.k_norm.weight,
+-                locs=cache_loc,
+-                k_cache=self._key_cache,
+-                v_cache=self._value_cache,
+-                num_heads=self.num_heads,
+-                head_dim=self.head_dim,
+-                eps=self.k_norm.variance_epsilon,
+-                commit_lens=commit_lens,
+-                locs_row_width=locs_row_width,
+-            )
+-            return
+-
+         key, value = self.context_kv(ctx_hidden)
+         loc = cache_loc.to(torch.long)
+-        if commit_lens is not None:
+-            # Write EVERY row and send the rejected ones to the pool's dummy slot 0,
+-            # rather than selecting the accepted rows out.  `ctx_hidden[valid]` is
+-            # boolean-mask indexing, whose output shape depends on the mask's CONTENTS,
+-            # so torch reads the mask back to the host before it can allocate: an
+-            # aten::nonzero and a full device-to-host sync, twice, on every commit.
+-            # Measured on this path at 5.7 ms of blocked CPU per round.  Free pages
+-            # start at 1, so slot 0 is where the allocator already sends discarded
+-            # rows and nothing reads it.
+-            valid = (
+-                torch.arange(locs_row_width, device=loc.device)
+-                < commit_lens.to(torch.long).view(-1, 1)
+-            ).reshape(-1)
+-            loc = torch.where(valid, loc, torch.zeros_like(loc))
+         self._key_cache[loc, 0] = key.to(self._key_cache.dtype)
+         self._value_cache[loc, 0] = value.to(self._value_cache.dtype)
+ 
+@@ -1396,11 +1327,32 @@ class DSparkDraftMixin:
+                 dtype=ctx_hidden.dtype,
+             )
+             if cache_loc_2d is not None and commit_lens is not None:
++                valid = (
++                    torch.arange(cache_loc_2d.shape[1], device=cache_loc_2d.device)
++                    < commit_lens.to(torch.long).view(-1, 1)
++                ).reshape(-1)
++                # Write EVERY row and send the invalid ones to the pool's dummy slot
++                # 0, rather than selecting the valid rows out.
++                #
++                # `ctx_hidden[valid]` is boolean-mask indexing, whose output shape
++                # depends on the mask's CONTENTS, so torch has to read the mask back to
++                # the host before it can allocate: an aten::nonzero and a full
++                # device-to-host sync, twice, on every commit. Measured on this path at
++                # 3.3 nonzero calls and 5.7 ms of blocked CPU per round, against exactly
++                # zero for the vanilla head -- which never enters this branch. At bs=1
++                # the round is dispatch-bound, so a sync does not merely cost its own
++                # time: it stops the host from running ahead to enqueue the next
++                # kernels, and the GPU goes idle waiting.
++                #
++                # Slot 0 is the allocator's own convention for this ("The padded slot 0
++                # is used for writing dummy outputs from padded tokens" -- free pages
++                # start at 1), so the discarded rows land somewhere nothing reads. The
++                # valid rows are written exactly as before, so the cache contents at
++                # every live slot are unchanged and the drafted tokens are identical.
++                locs = cache_loc_2d.reshape(-1)
+                 self.markov_head.write_context_kv(
+                     ctx_hidden=ctx_hidden,
+-                    cache_loc=cache_loc_2d.reshape(-1),
+-                    commit_lens=commit_lens,
+-                    locs_row_width=cache_loc_2d.shape[1],
++                    cache_loc=torch.where(valid, locs, torch.zeros_like(locs)),
+                 )
+             else:
+                 self.markov_head.write_context_kv(
+diff --git a/test/registered/spec/dspark/test_dspark_ctx_kv_fused_parity.py b/test/registered/spec/dspark/test_dspark_ctx_kv_fused_parity.py
+deleted file mode 100644
+index 066be1924d..0000000000
+--- a/test/registered/spec/dspark/test_dspark_ctx_kv_fused_parity.py
++++ /dev/null
+@@ -1,139 +0,0 @@
+-# Added relative to sgl-project/sglang@702de2631 for DSpark prefix-attention drafter serving (specfloor, serving/sglang).
+-"""Parity: the AttnHead fused context-KV write vs the eager module path.
+-
+-Accuracy tests cannot catch a broken context write (spec decoding stays correct
+-regardless of draft KV; only accept length drops), so compare the two paths
+-directly, and check that rejected rows are left alone rather than written.
+-"""
+-
+-import unittest
+-
+-import torch
+-
+-from sglang.srt.models.dspark import AttnHead
+-from sglang.test.ci.ci_register import register_cuda_ci
+-from sglang.test.test_utils import CustomTestCase
+-
+-register_cuda_ci(est_time=30, stage="base-b", runner_config="1-gpu-small")
+-
+-DEVICE = torch.device("cuda")
+-HIDDEN = 128
+-NUM_HEADS = 2
+-HEAD_DIM = 64
+-EPS = 1e-6
+-SLOTS = 64
+-
+-
+-def _make_head(g):
+-    head = AttnHead(
+-        vocab_size=64,
+-        markov_rank=32,
+-        hidden_size=HIDDEN,
+-        num_heads=NUM_HEADS,
+-        head_dim=HEAD_DIM,
+-        mlp_hidden=32,
+-        gate_mode="none",
+-        rms_norm_eps=EPS,
+-        anchor_kv=False,
+-    ).to(DEVICE, torch.bfloat16)
+-    with torch.no_grad():
+-        for t in (head.ctx_norm.weight, head.k_norm.weight):
+-            t.copy_(torch.randn(t.shape, device=DEVICE, generator=g).to(t.dtype))
+-    head.ensure_context_cache(num_slots=SLOTS, device=DEVICE, dtype=torch.bfloat16)
+-    # Builds _ctx_kv_weight and stops at the token-table gate (no embedding source).
+-    head.prepare_for_inference()
+-    return head
+-
+-
+-def _run(head, *, fused, ctx_hidden, locs, commit_lens, row_width):
+-    head._key_cache.zero_()
+-    head._value_cache.zero_()
+-    saved = head._ctx_kv_weight
+-    if not fused:
+-        head._ctx_kv_weight = None
+-    try:
+-        head.write_context_kv(
+-            ctx_hidden=ctx_hidden,
+-            cache_loc=locs,
+-            commit_lens=commit_lens,
+-            locs_row_width=row_width,
+-        )
+-    finally:
+-        head._ctx_kv_weight = saved
+-    return head._key_cache.clone(), head._value_cache.clone()
+-
+-
+-class TestDsparkCtxKvFusedParity(CustomTestCase):
+-    def setUp(self):
+-        self.g = torch.Generator(device=DEVICE).manual_seed(0)
+-        self.head = _make_head(self.g)
+-
+-    def _window(self, bs, row_width):
+-        n = bs * row_width
+-        ctx = torch.randn(
+-            n, HIDDEN, device=DEVICE, dtype=torch.float32, generator=self.g
+-        ).to(torch.bfloat16)
+-        # Distinct live slots, never 0 -- free pages start at 1.
+-        locs = torch.randperm(SLOTS - 1, device=DEVICE, generator=self.g)[:n] + 1
+-        return ctx, locs.to(torch.int64)
+-
+-    def test_matches_eager_on_accepted_rows(self):
+-        bs, row_width = 3, 5
+-        ctx, locs = self._window(bs, row_width)
+-        commit_lens = torch.tensor([5, 2, 0], device=DEVICE, dtype=torch.int32)
+-
+-        k_f, v_f = _run(self.head, fused=True, ctx_hidden=ctx, locs=locs,
+-                        commit_lens=commit_lens, row_width=row_width)
+-        k_e, v_e = _run(self.head, fused=False, ctx_hidden=ctx, locs=locs,
+-                        commit_lens=commit_lens, row_width=row_width)
+-
+-        col = torch.arange(row_width, device=DEVICE)
+-        accepted = (col < commit_lens.view(-1, 1).to(torch.long)).reshape(-1)
+-        live = locs[accepted]
+-        self.assertEqual(int(live.numel()), 7)
+-        # MEASURED bitwise identical on H100 at these shapes; the tolerance is 2 bf16
+-        # ulp of slack for a GEMM that tiles differently at another size.
+-        for fused, eager in ((k_f, k_e), (v_f, v_e)):
+-            torch.testing.assert_close(
+-                fused[live].float(), eager[live].float(), rtol=8e-3, atol=8e-3
+-            )
+-
+-    def test_rejected_rows_are_not_written(self):
+-        bs, row_width = 3, 5
+-        ctx, locs = self._window(bs, row_width)
+-        commit_lens = torch.tensor([5, 2, 0], device=DEVICE, dtype=torch.int32)
+-        k_f, v_f = _run(self.head, fused=True, ctx_hidden=ctx, locs=locs,
+-                        commit_lens=commit_lens, row_width=row_width)
+-
+-        col = torch.arange(row_width, device=DEVICE)
+-        rejected = (col >= commit_lens.view(-1, 1).to(torch.long)).reshape(-1)
+-        dead = locs[rejected]
+-        self.assertEqual(int(dead.numel()), 8)
+-        self.assertTrue(torch.all(k_f[dead] == 0))
+-        self.assertTrue(torch.all(v_f[dead] == 0))
+-        # Slot 0 is the dummy the eager fallback steers rejects to; the kernel skips
+-        # them outright, so it stays clean too.
+-        self.assertTrue(torch.all(k_f[0] == 0))
+-
+-    def test_matches_eager_without_commit_lens(self):
+-        ctx, locs = self._window(1, 6)
+-        k_f, v_f = _run(self.head, fused=True, ctx_hidden=ctx, locs=locs,
+-                        commit_lens=None, row_width=None)
+-        k_e, v_e = _run(self.head, fused=False, ctx_hidden=ctx, locs=locs,
+-                        commit_lens=None, row_width=None)
+-        for fused, eager in ((k_f, k_e), (v_f, v_e)):
+-            torch.testing.assert_close(
+-                fused[locs].float(), eager[locs].float(), rtol=8e-3, atol=8e-3
+-            )
+-
+-    def test_falls_back_when_cache_is_not_bf16(self):
+-        head = _make_head(self.g)
+-        ctx = torch.randn(4, HIDDEN, device=DEVICE, dtype=torch.float32)
+-        self.assertFalse(head._fused_ctx_kv_supported(ctx))
+-        self.assertTrue(
+-            head._fused_ctx_kv_supported(ctx.to(torch.bfloat16))
+-        )
+-
+-
+-if __name__ == "__main__":
+-    unittest.main()

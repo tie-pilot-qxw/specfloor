@@ -1,0 +1,9 @@
+{
+  "time_unix": 1790108762.9795814,
+  "query_started_unix": 1790108762.611582,
+  "gpu": "GPU-eb2cffac-d74f-77dc-0221-1955eae16c6a, 78798, 0",
+  "processes": "627873, 78788",
+  "pids": [
+    627873
+  ]
+}

@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 65,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 63,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    true,
+    true
+   ]
+  },
+  "run_init": {
+   "compared": 396,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     3.5407779216766357,
+     4.267864227294922,
+     3.8294944763183594
+    ],
+    [
+     3.5407779216766357,
+     4.267864227294922,
+     3.8294944763183594
+    ]
+   ],
+   "grad_norm": [
+    81.93971712896224,
+    81.93971712896224
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 396,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     1.891090750694275,
+     0.4914523959159851,
+     0.19800105690956116
+    ],
+    [
+     1.891090750694275,
+     0.4914523959159851,
+     0.19800105690956116
+    ]
+   ],
+   "grad_norm": [
+    4.537480684344903,
+    4.537480684344903
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/slotembed_qwen3_4b_b7.orig.json",
+ "candidate": "<results>/slotembed_qwen3_4b_b7.overlay.json"
+}

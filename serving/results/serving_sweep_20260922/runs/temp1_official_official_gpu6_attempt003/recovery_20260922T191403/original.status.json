@@ -1,0 +1,9 @@
+{
+  "arm": "official",
+  "gpu": 3,
+  "concurrency": 1,
+  "updated_unix": 1790104275.6030154,
+  "recovery_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003/recovery_20260922T182753",
+  "state": "failed",
+  "error": "RuntimeError('Server exited: -9')"
+}

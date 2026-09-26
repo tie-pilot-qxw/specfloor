@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 83,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 81,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    true,
+    true
+   ]
+  },
+  "run_init": {
+   "compared": 450,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     5.377191066741943,
+     4.964290142059326,
+     4.985363960266113
+    ],
+    [
+     5.377191066741943,
+     4.964290142059326,
+     4.985363960266113
+    ]
+   ],
+   "grad_norm": [
+    75.66439713030678,
+    75.66439713030678
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 450,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     2.204636335372925,
+     0.5693538188934326,
+     0.18000192940235138
+    ],
+    [
+     2.204636335372925,
+     0.5693538188934326,
+     0.18000192940235138
+    ]
+   ],
+   "grad_norm": [
+    5.831311929168826,
+    5.831311929168826
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/attnhead_qwen3_4b_b7.orig.json",
+ "candidate": "<results>/attnhead_qwen3_4b_b7.overlay.json"
+}

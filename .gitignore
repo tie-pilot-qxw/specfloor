@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Working output of a live run. The archived runs behind the paper live in
+# measurements/ and are stored gzipped, so they do not match these patterns --
+# that is deliberate, not an accident of naming.
+runs/
+*.jsonl
+*.log
+
+# Output of python -m paper.figures; regenerated from measurements/.
+paper/figures/

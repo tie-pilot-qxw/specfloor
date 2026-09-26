@@ -1,0 +1,66 @@
+{
+  "arms": [
+    "ours"
+  ],
+  "concurrencies": [
+    1
+  ],
+  "execution_order": [
+    1
+  ],
+  "temperature": 1.0,
+  "max_new_tokens": 2048,
+  "rows": 3030,
+  "datasets": {
+    "gsm8k": 500,
+    "math500": 500,
+    "aime25": 30,
+    "humaneval": 164,
+    "mbpp": 256,
+    "livecodebench": 500,
+    "mt-bench": 80,
+    "alpaca": 500,
+    "arena-hard-v2": 500
+  },
+  "seed": 980406,
+  "gpu": 3,
+  "mem_fraction_static": 0.95,
+  "independent_passes": 1,
+  "source_sha256": {
+    "/workspace/DeepSpec/refine_exp/run_serving_sweep.py": "3ddb22a57697ff30510fdcb2607f12e398eb66da96867db841eb2862b979d6f0",
+    "/workspace/DeepSpec/refine_exp/serving_sweep_client.py": "c7a688102121d2cf68efe1e52a9639df7d4c0b807024f72ec9e75b6022524233",
+    "/workspace/DeepSpec/refine_exp/serving_sweep_bootstrap/sitecustomize.py": "6dd319360a5578d190ca3bac6539c5b5c9cf51b8336cc54f04cd1d28e930788a",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler.py": "97109c99c93a8cc72616f36581b468a17d5e079cca0ec9744e2d0bcfb5833bde",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/observability/req_time_stats.py": "3a32af2aafbb95366a12aa6b01fa8d0c1b973f0188019ea623c69c7d285ed46f",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/managers/scheduler_components/batch_result_processor.py": "88f3f2030ed5adfa409ab9f5c20a19403bde5ea11d0cdc164f63113f1a56e363",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a",
+    "/workspace/DeepSpec/refine_exp/run_serving_temp1_arm.py": "5456ed85c0c2eb418e17c3ccedd73f1100617122e53b95d0ab784b0152d43418",
+    "/workspace/DeepSpec/refine_exp/serving_temp1_client.py": "e91765dc5c4d6e123216f1e5762c6cc3ce1336252fb172ac3e1f19cd85332dc1",
+    "/workspace/DeepSpec/refine_exp/resume_serving_sweep.py": "6eca960a155dce7806cea9dadb4ec9a87211a3fc02ffc01c0ef6991061724a8e"
+  },
+  "prepared_requests_sha256": "b5efd513e563d20f5880fec8cf25c3e2afb1899bf19ae1a96d0334811bb24831",
+  "dataset_sha256": {
+    "gsm8k": "63330a20a17f416fdfca978ebcd5124f8da5546affb3a079b65a6e8daf42b41f",
+    "math500": "4f530d9d3126dca41c12a96e78ec0dd460b7202052ba86101c4da159cea33aac",
+    "aime25": "b8835996839caa1d982c5bb9ecaeca636424f0b8ed9f33a40b084feb1c1766d0",
+    "humaneval": "7aaed6a3987007ecee4851ee4572fde214aa2a36ae83fa21be9c5f443aa71675",
+    "mbpp": "019b981f7122e39ce58866cf93f4206511c72532cb537bbaf298753a0f128ba7",
+    "livecodebench": "40ed536492f331ac27b3b68506072366ca1d3a304b92c31d822574e778c87318",
+    "mt-bench": "df05defbcea350dff39f7d2996a7cba8a029e6e06069dfcdab11ceb998d743b0",
+    "alpaca": "c1f1623ac08e4c4f024604bb2689a024963eb7eb9dbbc29e57dda5a11d87e07b",
+    "arena-hard-v2": "e5fcce94ffb1a2ef2082b5c63ac36608f2b7faf00da13ecb94ce2adc649b7b91"
+  },
+  "official_config_sha256": "494e5665481ff8216c4e857a531c401f72b7fb795434a8201f45252c0ad7568a",
+  "timing": "Per-task output tokens / exact perf_counter elapsed from request dispatch to all responses. Includes server tokenization, prefill and HTTP streaming. Preformatted chat; no prefix caching.",
+  "decode": "Diagnostic per-request scheduler elapsed from prefill completion to finalization, including scheduling. N-1 tokens. Not GPU-only time or system throughput at C>1.",
+  "aggregation": "Arithmetic mean of nine per-task speedups over AR at the same concurrency.",
+  "note": "One temperature-1 C=1 pass; legacy sampling_seed=980406; no changes to T=0 results.",
+  "reference_ar": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_gpu3_clean/attempt_001",
+  "checkpoint": "/workspace/checkpoints/deepspec/attnconv_b7_qwen3_4b_10ep/step_26160",
+  "checkpoint_config_sha256": "751e42e3fd3ceb4a622a22daca3a19c7851e845d917371e6aa452b277a636744",
+  "cross_gpu_authorized": true,
+  "parallel_runner_sha256": "5456ed85c0c2eb418e17c3ccedd73f1100617122e53b95d0ab784b0152d43418",
+  "sampling_seed": 980406,
+  "telemetry_timeout_s": 60
+}

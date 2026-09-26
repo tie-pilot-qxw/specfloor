@@ -1,0 +1,8 @@
+{
+  "arm": "ours",
+  "gpu": 6,
+  "concurrency": 1,
+  "updated_unix": 1790065213.0489469,
+  "recovery_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_sweep_20260922_parallel/ours_gpu6_attempt001/recovery_20260922T074837",
+  "state": "complete"
+}

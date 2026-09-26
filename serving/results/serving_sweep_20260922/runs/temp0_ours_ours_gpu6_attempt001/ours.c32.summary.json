@@ -1,0 +1,110 @@
+{
+  "gsm8k": {
+    "rows": 500,
+    "completion_tokens": 150406,
+    "elapsed_s": 8.83605775696924,
+    "system_output_tokens_per_second": 17021.844371871684,
+    "verification_steps": 23101,
+    "accepted_length": 6.510800398251158,
+    "summed_scheduler_decode_elapsed_s": 241.8974940776825,
+    "post_prefill_output_tokens": 149906,
+    "per_request_decode_tokens_per_second": 619.7087761143134,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "math500": {
+    "rows": 500,
+    "completion_tokens": 394389,
+    "elapsed_s": 22.522857930976897,
+    "system_output_tokens_per_second": 17510.61082961304,
+    "verification_steps": 61175,
+    "accepted_length": 6.44689824274622,
+    "summed_scheduler_decode_elapsed_s": 619.6688485145569,
+    "post_prefill_output_tokens": 393889,
+    "per_request_decode_tokens_per_second": 635.6443460797061,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "aime25": {
+    "rows": 30,
+    "completion_tokens": 53235,
+    "elapsed_s": 3.9553876420250162,
+    "system_output_tokens_per_second": 13458.857846040495,
+    "verification_steps": 9102,
+    "accepted_length": 5.848714568226764,
+    "summed_scheduler_decode_elapsed_s": 87.31349468231201,
+    "post_prefill_output_tokens": 53205,
+    "per_request_decode_tokens_per_second": 609.3559786329143,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "humaneval": {
+    "rows": 164,
+    "completion_tokens": 72860,
+    "elapsed_s": 5.1506738439784385,
+    "system_output_tokens_per_second": 14145.72193989323,
+    "verification_steps": 12589,
+    "accepted_length": 5.787592342521249,
+    "summed_scheduler_decode_elapsed_s": 125.26334977149963,
+    "post_prefill_output_tokens": 72696,
+    "per_request_decode_tokens_per_second": 580.3453295206389,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "mbpp": {
+    "rows": 256,
+    "completion_tokens": 86782,
+    "elapsed_s": 6.036467180994805,
+    "system_output_tokens_per_second": 14376.289541211156,
+    "verification_steps": 15640,
+    "accepted_length": 5.548721227621483,
+    "summed_scheduler_decode_elapsed_s": 151.03336477279663,
+    "post_prefill_output_tokens": 86526,
+    "per_request_decode_tokens_per_second": 572.8932817603798,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "livecodebench": {
+    "rows": 500,
+    "completion_tokens": 177576,
+    "elapsed_s": 16.626436943013687,
+    "system_output_tokens_per_second": 10680.340027669981,
+    "verification_steps": 29863,
+    "accepted_length": 5.946355021263771,
+    "summed_scheduler_decode_elapsed_s": 440.6458079814911,
+    "post_prefill_output_tokens": 177076,
+    "per_request_decode_tokens_per_second": 401.85563278395676,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "mt-bench": {
+    "rows": 80,
+    "completion_tokens": 36626,
+    "elapsed_s": 4.292971365037374,
+    "system_output_tokens_per_second": 8531.61991675226,
+    "verification_steps": 9156,
+    "accepted_length": 4.000218435998253,
+    "summed_scheduler_decode_elapsed_s": 80.0910427570343,
+    "post_prefill_output_tokens": 36546,
+    "per_request_decode_tokens_per_second": 456.30570837823444,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "alpaca": {
+    "rows": 500,
+    "completion_tokens": 181004,
+    "elapsed_s": 17.2072477209731,
+    "system_output_tokens_per_second": 10519.05586152414,
+    "verification_steps": 47427,
+    "accepted_length": 3.8164758470913194,
+    "summed_scheduler_decode_elapsed_s": 456.02008843421936,
+    "post_prefill_output_tokens": 180504,
+    "per_request_decode_tokens_per_second": 395.8246677679806,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  },
+  "arena-hard-v2": {
+    "rows": 500,
+    "completion_tokens": 522329,
+    "elapsed_s": 54.6887972879922,
+    "system_output_tokens_per_second": 9550.93229147838,
+    "verification_steps": 134914,
+    "accepted_length": 3.8715700372088886,
+    "summed_scheduler_decode_elapsed_s": 1557.382161617279,
+    "post_prefill_output_tokens": 521829,
+    "per_request_decode_tokens_per_second": 335.0680474329444,
+    "decode_note": "Scheduler prefill-finished to completion, including scheduling and finalization. Subtract one prefill output token per request. At C>1 this is NOT system throughput."
+  }
+}

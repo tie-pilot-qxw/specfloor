@@ -1,0 +1,24 @@
+{
+  "started_unix": 1790101673.7018394,
+  "retained_tasks": [
+    "gsm8k"
+  ],
+  "remaining_tasks": [
+    "math500",
+    "aime25",
+    "humaneval",
+    "mbpp",
+    "livecodebench",
+    "mt-bench",
+    "alpaca",
+    "arena-hard-v2"
+  ],
+  "reason": "Foreign GPU process invalidated unsaved task",
+  "temperature": 1.0,
+  "sampling_seed": 980406,
+  "telemetry_timeout_s": 60,
+  "runner_sha256": "48d12a2a817468e33b321bbb7b2bc3d4ca81b6064f1ad60c125a20c26723f882",
+  "original_manifest": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003/manifest.json",
+  "note": "C=1 resumes at whole-task boundaries; no elapsed timers span server restarts.",
+  "recovery_gpu": 3
+}

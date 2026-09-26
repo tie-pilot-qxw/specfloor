@@ -1,0 +1,8 @@
+{
+  "arm": "official",
+  "gpu": 0,
+  "concurrency": 1,
+  "updated_unix": 1790108721.7196975,
+  "recovery_path": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003/recovery_20260922T191403",
+  "state": "complete"
+}

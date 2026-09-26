@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 104,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 102,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    true,
+    true
+   ]
+  },
+  "run_init": {
+   "compared": 435,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     3.53194260597229,
+     4.287243366241455,
+     3.882331609725952
+    ],
+    [
+     3.53194260597229,
+     4.287243366241455,
+     3.882331609725952
+    ]
+   ],
+   "grad_norm": [
+    115.69833362176578,
+    115.69833362176578
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 435,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     1.875730276107788,
+     0.6751075983047485,
+     0.16304871439933777
+    ],
+    [
+     1.875730276107788,
+     0.6751075983047485,
+     0.16304871439933777
+    ]
+   ],
+   "grad_norm": [
+    5.970034006426494,
+    5.970034006426494
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/dspark_qwen3_4b_b7_1ep_shortconv.orig.json",
+ "candidate": "<results>/dspark_qwen3_4b_b7_1ep_shortconv.overlay.json"
+}
