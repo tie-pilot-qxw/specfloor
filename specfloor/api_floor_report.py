@@ -28,11 +28,13 @@ import json
 import math
 import random
 
+from specfloor.records import open_text
+
 
 def load(pattern, gate):
     rows, dropped, kept = [], 0, 0
     for f in sorted(glob.glob(pattern)):
-        for line in open(f):
+        for line in open_text(f):
             line = line.strip()
             if not line:
                 continue

@@ -27,6 +27,7 @@ import random
 import statistics as st
 
 from specfloor import config as C
+from specfloor.records import open_text
 
 
 # ------------------------------------------------------------- bootstrap ----
@@ -61,6 +62,68 @@ def hierarchical_bootstrap(records, statistic, B=C.BOOTSTRAP_B, seed=C.SEED):
     lo = draws[int((1 - C.CI) / 2 * len(draws))]
     hi = draws[int((1 + C.CI) / 2 * len(draws)) - 1]
     return point, lo, hi
+
+
+_COUNTS = {}
+
+
+def resample_counts(n, B=C.BOOTSTRAP_B, seed=C.SEED):
+    """B x n matrix of how often each of n prompts is drawn in each replicate.
+
+    The draws replay hierarchical_bootstrap's stream exactly -- n calls to
+    rng.randrange(n) per replicate on random.Random(seed) -- so a statistic
+    evaluated through these counts sees the same replicates the scalar route
+    would. What changes is the cost: a statistic that is a ratio of per-prompt
+    sums becomes one matrix product, so a whole table of intervals costs one
+    pass rather than one Python loop per cell.
+    """
+    key = (n, B, seed)
+    if key not in _COUNTS:
+        import numpy as np
+        rng = random.Random(seed)
+        idx = np.fromiter((rng.randrange(n) for _ in range(B * n)),
+                          dtype=np.int64, count=B * n)
+        counts = np.zeros((B, n), dtype=np.float64)
+        np.add.at(counts, (np.repeat(np.arange(B), n), idx), 1.0)
+        _COUNTS[key] = counts
+    return _COUNTS[key]
+
+
+def ratio_interval(pids, num, den, B=C.BOOTSTRAP_B, seed=C.SEED, ci=C.CI):
+    """Point and prompt-cluster interval for sum(num) / sum(den).
+
+    One row per record; `pids` names the prompt each row belongs to, and all
+    rows of a prompt are resampled together. `num` and `den` may carry trailing
+    columns, each an independent statistic sharing the same replicates. A
+    Hajek mean is num = w*y, den = w; a ratio of Hajek means -- G/R, the share
+    of a floor one token removes, a recovery fraction -- is num = w*y,
+    den = w*x, which is the ratio of population sums the paper quotes rather
+    than a mean of per-anchor ratios.
+
+    Prompts are indexed in first-encounter order, the order
+    hierarchical_bootstrap resamples them in, and the endpoints are its order
+    statistics, so the two routes return the same interval.
+    """
+    import numpy as np
+    order = {}
+    for p in pids:
+        order.setdefault(p, len(order))
+    rows = np.fromiter((order[p] for p in pids), dtype=np.int64, count=len(pids))
+    num, den = np.asarray(num, dtype=float), np.asarray(den, dtype=float)
+    shape = num.shape[1:]
+    by_num = np.zeros((len(order),) + shape)
+    by_den = np.zeros((len(order),) + shape)
+    np.add.at(by_num, rows, num)
+    np.add.at(by_den, rows, den)
+    counts = resample_counts(len(order), B, seed)
+    flat_n = by_num.reshape(len(order), -1)
+    flat_d = by_den.reshape(len(order), -1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        point = flat_n.sum(0) / flat_d.sum(0)
+        draws = np.sort((counts @ flat_n) / (counts @ flat_d), axis=0)
+    lo = draws[int((1 - ci) / 2 * B)]
+    hi = draws[int((1 + ci) / 2 * B) - 1]
+    return (point.reshape(shape), lo.reshape(shape), hi.reshape(shape))
 
 
 def fmt(point, lo, hi, pct=False, nd=3):
@@ -230,8 +293,8 @@ def _ratio_of_means(rs, m, k):
 
 
 def rm_report(rm, slot_range=None):
-    """R_m with CIs and the H2 wording gate. Without this the R_m pass produced
-    a file nobody read, so H2 could not be adjudicated at all."""
+    """R_m with CIs and the wording gate for the locality claim. Without this the
+    R_m pass produced a file nobody read, and the claim could not be adjudicated."""
     if not rm:
         return
     K = C.GAMMA
@@ -300,7 +363,7 @@ def rm_report(rm, slot_range=None):
             row += f"{fmt(*hierarchical_bootstrap(sub, lambda rs, _m=m: pooled(rs, _m)), pct=True, nd=1):>26}"
         print(row)
 
-    # H2 wording gate -- decided by the CI, never written in advance
+    # locality wording gate -- decided by the CI, never written in advance
     if legacy:
         sub = [r for r in rm if r["R"]["2"].get(str(K - 1)) is not None]
         f = lambda rs: wmean([r["R"]["2"][str(K - 1)] for r in rs],
@@ -319,7 +382,7 @@ def rm_report(rm, slot_range=None):
             v = "FALSIFIED: the second-order-local explanation does not hold here"
         else:
             v = "indeterminate at this n"
-        print(f"\n   H2 gate on R_2 at the deepest slot: LCB={lo:.3f} UCB={hi:.3f}"
+        print(f"\n   locality gate on R_2 at the deepest slot: LCB={lo:.3f} UCB={hi:.3f}"
               f"\n   -> permitted wording: {v}")
 
 
@@ -335,7 +398,7 @@ def main() -> None:
     cheap = []
     for pat in args.cheap:
         for path in sorted(glob.glob(pat)):
-            cheap += [json.loads(l) for l in open(path) if l.strip()]
+            cheap += [json.loads(l) for l in open_text(path) if l.strip()]
     print(f"loaded {len(cheap)} cheap-probe anchors "
           f"from {len(args.cheap)} pattern(s)")
     if any("converged" in r for r in cheap):
@@ -361,14 +424,14 @@ def main() -> None:
         rm = []
         for pat in args.rm:
             for path in sorted(glob.glob(pat)):
-                rm += [json.loads(l) for l in open(path) if l.strip()]
+                rm += [json.loads(l) for l in open_text(path) if l.strip()]
         rm_report(rm)
 
     if args.nll:
         nll = []
         for pat in args.nll:
             for path in sorted(glob.glob(pat)):
-                nll += [json.loads(l) for l in open(path) if l.strip()]
+                nll += [json.loads(l) for l in open_text(path) if l.strip()]
         decomposition(cheap, nll, args.slot)
 
 

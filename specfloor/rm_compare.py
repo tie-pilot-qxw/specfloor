@@ -34,12 +34,13 @@ import json
 import random
 
 from specfloor import config as C
+from specfloor.records import open_text
 
 
 def load(pattern):
     recs = []
     for f in sorted(glob.glob(pattern)):
-        with open(f) as fh:
+        with open_text(f) as fh:
             for line in fh:
                 line = line.strip()
                 if line:
