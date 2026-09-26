@@ -1,0 +1,8 @@
+{
+  "arm": "official",
+  "gpu": 6,
+  "started_unix": 1790100758.5475318,
+  "updated_unix": 1790101391.1893167,
+  "state": "failed",
+  "error": "RuntimeError(\"GPU process set changed: {'time_unix': 1790101110.6428704, 'query_started_unix': 1790101110.2775457, 'gpu': 'GPU-d6d9222c-9b57-3843-4d93-d2a40b30ad2b, 78196, 100', 'processes': '3720273, 78148\\\\n3774983, 518', 'pids': [3720273, 3774983]}\")"
+}

@@ -1,0 +1,46 @@
+{
+  "gpu": 3,
+  "batches": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    512,
+    1024
+  ],
+  "arms": [
+    "official",
+    "ours"
+  ],
+  "allow_idle_resident": false,
+  "temperature": 0,
+  "gamma": 7,
+  "warmup": 12,
+  "iterations": 64,
+  "checkpoint_paths": {
+    "official": "/workspace/tmp/ckpt_official_dspark",
+    "ours": "/workspace/checkpoints/deepspec/attnconv_b7_qwen3_4b_10ep/step_26160"
+  },
+  "started_utc": "2026-09-22T05:03:56Z",
+  "method": "fixed-state replay of actual SGLang draft proposal; CUDA-event intervals",
+  "source_sha256": {
+    "/workspace/DeepSpec/refine_exp/run_draft_forward_probe.py": "022679ca8067f2acc287728759d0ff93a62d88817eb5e7e93c7cbf5f9a5b011d",
+    "/workspace/DeepSpec/refine_exp/draft_forward_probe_server.py": "3ae6a702f9ff87d71ed4316d681f1d078027fd48548d94c2a41eae297d493c72",
+    "/workspace/DeepSpec/refine_exp/draft_probe_bootstrap/sitecustomize.py": "9ab718a359262007e277ec5dfb9789ccbb24f2687abb78ee3933794c43f4d774"
+  },
+  "checkpoint_config_sha256": {
+    "official": "494e5665481ff8216c4e857a531c401f72b7fb795434a8201f45252c0ad7568a",
+    "ours": "751e42e3fd3ceb4a622a22daca3a19c7851e845d917371e6aa452b277a636744"
+  },
+  "source_run_directory": "/workspace/DeepSpec/refine_exp/eval_out/draft_forward_sweep_20260922a",
+  "serving_runtime_git_revision": "81f7f3ff13db6d5115ddd5b90e0261e656c07b67",
+  "runtime_source_sha256": {
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/speculative/dspark_components/dspark_draft.py": "3c03773bd53e61507f0a8a66be66bcee1bbf80237681fed430ab88023acf001a",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dspark.py": "316b6110c71a81848cacfe19d49cc2c08be9caa943be83b14be1dad4fa2bd277",
+    "/workspace/sglang-eval-env/lib/python3.12/site-packages/sglang/srt/models/dflash.py": "fca41dc00ccbc28fac7b2e66708532f2b157cab50afe820b3faf0e1fab42717e"
+  }
+}

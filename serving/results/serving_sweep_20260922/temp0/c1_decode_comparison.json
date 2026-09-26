@@ -1,0 +1,34 @@
+{
+  "temperature": 0,
+  "concurrency": 1,
+  "metric": "Per-task sum(N-1 output tokens) / sum(scheduler prefill-finished to completion elapsed); includes decode scheduling/finalization, not GPU-only time. Arithmetic mean of task ratios.",
+  "per_task_decode_speedup_over_ar": {
+    "official": {
+      "gsm8k": 4.617408725636009,
+      "math500": 4.5685765530754825,
+      "aime25": 4.228143772893782,
+      "humaneval": 4.144805636048604,
+      "mbpp": 3.892197262713126,
+      "livecodebench": 4.23726148881309,
+      "mt-bench": 2.795417232418609,
+      "alpaca": 2.6694034883590114,
+      "arena-hard-v2": 2.7048987175568833
+    },
+    "ours": {
+      "gsm8k": 4.790778155118396,
+      "math500": 4.728832228844789,
+      "aime25": 4.3989047389265,
+      "humaneval": 4.289996616619769,
+      "mbpp": 4.049485867899231,
+      "livecodebench": 4.40375329686859,
+      "mt-bench": 2.9257429323570276,
+      "alpaca": 2.7963807470096955,
+      "arena-hard-v2": 2.832444434355253
+    }
+  },
+  "macro_decode_speedup_over_ar": {
+    "official": 3.762012541946066,
+    "ours": 3.9129243353332503
+  },
+  "mean_task_decode_ours_over_official": 1.0410096800997735
+}

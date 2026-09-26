@@ -1,0 +1,142 @@
+{
+  "checked_unix": 1790069582.2162628,
+  "points": [
+    {
+      "arm": "baseline",
+      "C": 1,
+      "rows": 3030,
+      "raw_sha256": "d907e33b3feca92ffaae55f0e3beaf4647fa34a6fe9a9595e4ab16d29f68d1f4",
+      "summary_sha256": "9f3624356d97aa21edffea9266c8a6d7a3e458eedfd5b68ef4da658569c36e76"
+    },
+    {
+      "arm": "baseline",
+      "C": 4,
+      "rows": 3030,
+      "raw_sha256": "ba5cd0a2141ca6f258c9589cca77e29add01cc619ed04d4317689e617476a5b5",
+      "summary_sha256": "09f52440e99da4cf80571c914e77cfdc1f1770e258d0ad9f08aece69cb5dc5ed"
+    },
+    {
+      "arm": "baseline",
+      "C": 8,
+      "rows": 3030,
+      "raw_sha256": "306edbf7eda756ba60a4dab19fe83dc9419d870c761bd8dce5c6f711943043a4",
+      "summary_sha256": "25d728b760e076f5a069b6eec9257f7a47812840e3b3afb148637b074de68dcf"
+    },
+    {
+      "arm": "baseline",
+      "C": 16,
+      "rows": 3030,
+      "raw_sha256": "322505d66d56992415df2a208d1019db8b2dd5307fad009f2a6a096534a7b806",
+      "summary_sha256": "75ed9353ec18860db1903b3a8eb58e9d9a9e2d699548477142302f76c2706ce9"
+    },
+    {
+      "arm": "baseline",
+      "C": 32,
+      "rows": 3030,
+      "raw_sha256": "2e81c89bf6c7edd257f79dd47500efb4a63c823bf72f70329e2b014f95026088",
+      "summary_sha256": "b023ec0daa2e1866ddf9c469deb74d28ece087b4197979a3031a8e9a9a065012"
+    },
+    {
+      "arm": "official",
+      "C": 1,
+      "rows": 3030,
+      "raw_sha256": "5f28fcfc87cf231b75c8ac8297413cf0dcebd0a176f3400c9c4fcc8268e5adc5",
+      "summary_sha256": "c9ec91a8ab1713fef4d274669ff634802e0145c8a42ff9cacda9ee101e2d1916"
+    },
+    {
+      "arm": "official",
+      "C": 4,
+      "rows": 3030,
+      "raw_sha256": "754a9ecb3273f5312a18a3d19f6c63a817fea5e0f1c91c75d58b5646e49cb627",
+      "summary_sha256": "5a5bf3b84ce6660e1eb22e1f8cfa279cdda8b9fd05e231c3f9d97bf2e2b0e817"
+    },
+    {
+      "arm": "official",
+      "C": 8,
+      "rows": 3030,
+      "raw_sha256": "0ab718100b26c4ebd0b38a6fb864daefe35161f905a8cde4fd73de9f6b047692",
+      "summary_sha256": "7d5a3a30db561d33d88fb26017f495328921d9fb9e83a96a99ac5b0648747d37"
+    },
+    {
+      "arm": "official",
+      "C": 16,
+      "rows": 3030,
+      "raw_sha256": "9bbdcaecb61bace928c7a70d95a2343ae05628f4a4224fff1ce1778c326c400c",
+      "summary_sha256": "4d3cc9b9da116d0626edb9e3983fba55783e99b7826866daf727bb75f9980757"
+    },
+    {
+      "arm": "official",
+      "C": 32,
+      "rows": 3030,
+      "raw_sha256": "1d96331f29c41d0b24b96315d087cf6def877dc2f8f7f619a840a4fa6bacbfaa",
+      "summary_sha256": "81af5e4c511d1bf7150b719a409185b8175e30f9ca82ac086c4f8e4ee3c11149"
+    },
+    {
+      "arm": "ours",
+      "C": 1,
+      "rows": 3030,
+      "raw_sha256": "e01756ae81a7bdfa341d88fe836126922ed303e08d10abfa549526fddd8d23e4",
+      "summary_sha256": "56617a4186a67b00f6b0eaa929fe1d314cd73b2d0220a8522c1708cfa02d4604"
+    },
+    {
+      "arm": "ours",
+      "C": 4,
+      "rows": 3030,
+      "raw_sha256": "3b54f8a440baf03f0c31a9b3873c3751b177f3d55434327bf4cde3a08c1dbe25",
+      "summary_sha256": "6e4118f3e3c3f7cce71d6beb39184834338be9cfb4e089cc08f694920583d597"
+    },
+    {
+      "arm": "ours",
+      "C": 8,
+      "rows": 3030,
+      "raw_sha256": "984286b126f02ba6064c9206493fb4d5112fc87db19285e6c1dc29c7458a63ea",
+      "summary_sha256": "8eae3b0231fa21839355febf88d4bfaf839b0a426e28f1b802525a2f8958b917"
+    },
+    {
+      "arm": "ours",
+      "C": 16,
+      "rows": 3030,
+      "raw_sha256": "cf4f43403ef1590a4e586d0eea35a5da8536e84fbd48df930fc329e8d076abfc",
+      "summary_sha256": "dbd0b13a2007adea95bae3f8021e6d0a4edcf3b35133071d80f0fad22f09693c"
+    },
+    {
+      "arm": "ours",
+      "C": 32,
+      "rows": 3030,
+      "raw_sha256": "964090f9a06d2b029da72d8f7ab04e27da6313e42b2672878b7334cb7311ace6",
+      "summary_sha256": "530bf95c2f53893aa8641f8c8d4b9a7135516fc8b4054da481d7bcb7504b7fcf"
+    }
+  ],
+  "recovery_checks": {
+    "baseline": {
+      "retained_tasks": [
+        "gsm8k"
+      ],
+      "retained_bytes_unchanged": true,
+      "recovered_tasks": 8
+    },
+    "ours": {
+      "retained_tasks": [
+        "gsm8k"
+      ],
+      "retained_bytes_unchanged": true,
+      "recovered_tasks": 8
+    }
+  },
+  "sampling": {
+    "baseline": {
+      "recovery_samples": 2600,
+      "unchanged_process_set": true,
+      "max_sample_gap_s": 17.06442093849182
+    },
+    "ours": {
+      "recovery_samples": 744,
+      "unchanged_process_set": true,
+      "max_sample_gap_s": 4.186601638793945
+    }
+  },
+  "all_13_previously_complete_points_unchanged": true,
+  "validated": true,
+  "total_rows": 45450,
+  "comparison_sha256": "1cbed25045da4add0c08ab6bdec6ed90128d368eb947b898c9f02f6ba5b9b663"
+}

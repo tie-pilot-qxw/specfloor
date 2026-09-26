@@ -1,0 +1,25 @@
+{
+  "started_unix": 1790104443.062149,
+  "retained_tasks": [
+    "gsm8k"
+  ],
+  "remaining_tasks": [
+    "math500",
+    "aime25",
+    "humaneval",
+    "mbpp",
+    "livecodebench",
+    "mt-bench",
+    "alpaca",
+    "arena-hard-v2"
+  ],
+  "reason": "Resume remaining tasks after recorded prior failure",
+  "temperature": 1.0,
+  "sampling_seed": 980406,
+  "wait_for_arm": "ours",
+  "telemetry_timeout_s": 60,
+  "runner_sha256": "3e4815a752d27b216cc236c2e111df790848ef3be7187f22d07083917c1175b8",
+  "original_manifest": "/workspace/DeepSpec/refine_exp/eval_out/serving_temp1_c1_20260922/official_gpu6_attempt003/manifest.json",
+  "note": "C=1 resumes at whole-task boundaries; no elapsed timers span server restarts.",
+  "recovery_gpu": 0
+}
