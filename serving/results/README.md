@@ -30,7 +30,7 @@ concurrency C ∈ {1, 4, 8, 16, 32} on the same 3,030 prompts: 30 points and
 90,900 request records. Raw JSONL is gzip-compressed losslessly; `archive.json`
 maps every point to its rows, summary, completion marker and source run, and
 maps the original source hashes to the snapshots in `sources/`, which are the
-exact collector and runtime files that ran. `protocol/` holds the run notes and
+exact collector and runtime files that ran. `protocol/` holds the run notes (`RUN_NOTES.md`) and
 the recovery scripts used at the time; `../sweep/` is the parametrised form of
 the same collector. Five of the snapshots are SGLang files (Apache-2.0):
 `scheduler.py`, `req_time_stats.py` and `batch_result_processor.py` are
