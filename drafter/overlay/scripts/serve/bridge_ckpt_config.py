@@ -72,10 +72,11 @@ def main():
         print(f"  {note}")
     existing = dict(cfg.get("dflash_config") or {})
     merged = {**existing, **add}
-    if add:
-        print(f"  dflash_config needs: {add}")
-    else:
-        print("  dflash_config: nothing to add")
+    missing = {k: v for k, v in add.items() if existing.get(k) != v}
+    if missing:
+        print(f"  dflash_config needs: {missing}")
+    elif add:
+        print(f"  dflash_config already has: {add}")
     for problem in blocking:
         print(f"  UNSERVABLE: {problem}")
     if blocking:

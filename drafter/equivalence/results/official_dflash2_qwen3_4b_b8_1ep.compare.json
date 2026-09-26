@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 85,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 81,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    false,
+    false
+   ]
+  },
+  "run_init": {
+   "compared": 330,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     5.2186079025268555,
+     4.693848609924316,
+     5.0141377449035645
+    ],
+    [
+     5.2186079025268555,
+     4.693848609924316,
+     5.0141377449035645
+    ]
+   ],
+   "grad_norm": [
+    74.38056050202319,
+    74.38056050202319
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 330,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     0.9347708225250244,
+     0.07809476554393768,
+     0.0679422989487648
+    ],
+    [
+     0.9347708225250244,
+     0.07809476554393768,
+     0.0679422989487648
+    ]
+   ],
+   "grad_norm": [
+    1.9129964964552255,
+    1.9129964964552255
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/official_dflash2_qwen3_4b_b8_1ep.orig.json",
+ "candidate": "<results>/official_dflash2_qwen3_4b_b8_1ep.overlay.json"
+}

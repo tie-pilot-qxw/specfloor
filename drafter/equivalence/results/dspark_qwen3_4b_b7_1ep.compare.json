@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 64,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 62,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    true,
+    true
+   ]
+  },
+  "run_init": {
+   "compared": 395,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     3.53194260597229,
+     4.287243366241455,
+     3.882331609725952
+    ],
+    [
+     3.53194260597229,
+     4.287243366241455,
+     3.882331609725952
+    ]
+   ],
+   "grad_norm": [
+    84.73977230215974,
+    84.73977230215974
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 395,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     1.8398394584655762,
+     0.7000521421432495,
+     0.19428786635398865
+    ],
+    [
+     1.8398394584655762,
+     0.7000521421432495,
+     0.19428786635398865
+    ]
+   ],
+   "grad_norm": [
+    7.166361177378117,
+    7.166361177378117
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/dspark_qwen3_4b_b7_1ep.orig.json",
+ "candidate": "<results>/dspark_qwen3_4b_b7_1ep.overlay.json"
+}

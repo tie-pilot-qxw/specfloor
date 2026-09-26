@@ -1,0 +1,89 @@
+{
+ "equal": true,
+ "sections": {
+  "init": {
+   "compared": 120,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "init_buffers": {
+   "compared": 2,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "trainable": {
+   "compared": 118,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true
+  },
+  "load": {
+   "compared": 3,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "strict_clean": [
+    true,
+    true
+   ]
+  },
+  "run_init": {
+   "compared": 487,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     3.0661745071411133,
+     0.5796904563903809,
+     3.725022792816162
+    ],
+    [
+     3.0661745071411133,
+     0.5796904563903809,
+     3.725022792816162
+    ]
+   ],
+   "grad_norm": [
+    75.1037115843,
+    75.1037115843
+   ]
+  },
+  "run_checkpoint": {
+   "compared": 487,
+   "only_reference": [],
+   "only_candidate": [],
+   "different": [],
+   "equal": true,
+   "losses": [
+    [
+     0.7212680578231812,
+     0.007680065464228392,
+     0.03456798940896988
+    ],
+    [
+     0.7212680578231812,
+     0.007680065464228392,
+     0.03456798940896988
+    ]
+   ],
+   "grad_norm": [
+    0.6897428805291617,
+    0.6897428805291617
+   ]
+  }
+ },
+ "metrics_only_on_one_side": {
+  "only_reference": [],
+  "only_candidate": []
+ },
+ "reference": "<results>/attnconv_qwen3_4b_b7_10ep.orig.json",
+ "candidate": "<results>/attnconv_qwen3_4b_b7_10ep.overlay.json"
+}
